@@ -13,7 +13,8 @@
         android:layout_marginTop="5dp"
         android:orientation="horizontal">
 
-        <TextView
+        <EditText
+            android:id="@+id/searchbox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="4"
@@ -21,6 +22,7 @@
             android:textSize="16sp" />
 
         <Button
+            android:id="@+id/searchbtn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

@@ -115,7 +115,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
-
             signupText.setVisibility(View.VISIBLE);
         }
     };

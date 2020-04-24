@@ -2,6 +2,8 @@ package com.example.officehrcenter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -36,6 +39,14 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
     private int checkId;
 
     private Thread t = null;
+    private static final String SIGNUPMSG = "signup";
+    private final String success = "SUCCESS";
+    private final String fail = "FAIL";
+    private final String taken = "username already exists";
+
+    private Toast toast;
+    private Statement stmt = null;
+    private Connection con = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +67,7 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
         occupationTip = (TextView)findViewById(R.id.occupationTIp);
         officeTip = (TextView)findViewById(R.id.officeTip);
 
+        toast.makeText(this, "Sign up failed. Please try again.", Toast.LENGTH_LONG);
     }
 
     @Override
@@ -122,8 +134,6 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
 
             }
 
-            Statement stmt = null;
-            Connection con = null;
             try { //create connection and statement objects
                 con = DriverManager.getConnection(
                         URL,
@@ -159,11 +169,28 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
                         updateStm += "student\');";
                     }
                     Log.e("JDBC", updateStm);
-                    stmt.executeUpdate(updateStm);
-                    //TODO: check update status
+                    int sqlStatus = stmt.executeUpdate(updateStm);
+                    //check update status
+                    if (sqlStatus > 0) {
+                        Message msg = handler.obtainMessage();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(SIGNUPMSG, "SUCCESS");
+                        msg.setData(bundle);
+                        handler.sendMessage(msg);
+                    } else {
+                        Message msg = handler.obtainMessage();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(SIGNUPMSG, "failed.");
+                        msg.setData(bundle);
+                        handler.sendMessage(msg);
+                    }
                 } else {
                     Log.e("JDBC", "success connection");
-                    handler.sendEmptyMessage(0);
+                    Message msg = handler.obtainMessage();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(SIGNUPMSG, "username existed");
+                    msg.setData(bundle);
+                    handler.sendMessage(msg);
                 }
 
                 //clean up
@@ -185,10 +212,34 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
     };
 
     private Handler handler = new Handler() {
+        @SuppressLint("HandlerLeak")
         public void handleMessage(Message msg) {
-            usernameInvalidTip.setVisibility(View.VISIBLE);
+            Bundle bundle = msg.getData();
+            String str = bundle.getString(SIGNUPMSG);
+            switch (str) {
+                case success:
+                    Log.e("JDBC", "called");
+                    finish();
+                    break;
+                case fail:
+                    toast.show();
+                    break;
+                case taken:
+                    usernameInvalidTip.setVisibility(View.VISIBLE);
+            }
+
         }
     };
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        t = null;
+        try { //close connection, may throw checked exception
+            if (con != null)
+                con.close();
+        } catch (SQLException e) {
+            Log.e("JDBC", "close connection failed");
+        }
+    }
 }
