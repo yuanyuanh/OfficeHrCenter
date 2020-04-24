@@ -2,7 +2,10 @@ package com.example.officehrcenter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import java.sql.Connection;
@@ -18,10 +21,13 @@ import android.widget.TextView;
 
 public class LoginActivity extends AppCompatActivity {
 
+    public static final int requestCode_235 = 235;
+
     private Thread t = null;
     private EditText usernameText;
     private EditText passwordText;
     private Button loginButt;
+    private Button signupButt;
     private TextView signupText;
 
     @Override
@@ -32,12 +38,18 @@ public class LoginActivity extends AppCompatActivity {
         usernameText = (EditText) findViewById(R.id.userName);
         passwordText = (EditText) findViewById(R.id.password);
         loginButt = (Button) findViewById(R.id.loginButt);
+        signupButt = (Button) findViewById(R.id.signupButt);
         signupText = (TextView) findViewById(R.id.signupText);
     }
 
     public void login(View view) {
         t = new Thread(background);
         t.start();
+    }
+
+    public void signUp(View view) {
+        Intent i = new Intent(this, SignupActivity.class);
+        startActivityForResult(i, requestCode_235);
     }
 
     private Runnable background = new Runnable() {
@@ -74,26 +86,14 @@ public class LoginActivity extends AppCompatActivity {
                 ResultSet result = stmt.executeQuery(query);
 
                 //read result set, write data to Log
-                if (result.next() == false) {
-                    signupText.setVisibility(View.VISIBLE);
-                } else {
-                    // go to next activity
-                    Log.e("JDBC", "success");
-                }
 
-                //read result set, write data to Log
-                /*
                 if (result.next() == false) {
-                    signupText.setVisibility(View.VISIBLE);
+                    Log.e("JDBC", "No users found");
+                    handler.sendEmptyMessage(0);
                 } else {
-                    while (result.next()) {
-                        Log.e("JDBC", "enter");
-                        String id = result.getString("id");
-                        String str = String.format("%d    %s", result.getInt("id"), result.getString("username"));
-                        Log.e("JDBC", str);
-                        Log.e("JDBC", "success connection");
-                    }
-                }*/
+                    Log.e("JDBC", "success connection");
+
+                }
 
                 //clean up
                 t = null;
@@ -112,6 +112,15 @@ public class LoginActivity extends AppCompatActivity {
 
         }
     };
+
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+
+            signupText.setVisibility(View.VISIBLE);
+        }
+    };
+
+
 
 
 }

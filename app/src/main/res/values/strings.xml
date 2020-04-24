@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OfficeHrCenter</string>
+    <string name="app_name">Office Hour Center</string>
     <string name="professor_name">Professor Name</string>
     <string name="search">Search</string>
 </resources>
