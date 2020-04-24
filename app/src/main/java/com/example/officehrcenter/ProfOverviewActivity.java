@@ -43,7 +43,7 @@ public class ProfOverviewActivity extends AppCompatActivity implements  AdapterV
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profoverview);
+        setContentView(R.layout.activity_profoverview);
         searchbtn = (Button)findViewById(R.id.searchbtn);
         searchbox=(EditText) findViewById(R.id.searchbox);
         searchbtn.setOnClickListener(this);
@@ -190,7 +190,7 @@ public class ProfOverviewActivity extends AppCompatActivity implements  AdapterV
         CustomAdapter(Context c, List<String> title)
         {
 
-            super(c, R.layout.profitem,title);
+            super(c, R.layout.activity_profitem,title);
             this.context = c;
             this.title=title;
 
@@ -201,7 +201,7 @@ public class ProfOverviewActivity extends AppCompatActivity implements  AdapterV
 
             LayoutInflater vi = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            View row = vi.inflate(R.layout.profitem, parent, false);
+            View row = vi.inflate(R.layout.activity_profitem, parent, false);
             TextView titlee = (TextView) row.findViewById(R.id.item1);
             int pos = position+1;
             titlee.setText( title.get(position));
