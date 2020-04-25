@@ -92,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
                     handler.sendEmptyMessage(0);
                 } else {
                     Log.e("JDBC", "success connection");
-
+                    handler.sendEmptyMessage(1);
                 }
 
                 //clean up
@@ -115,7 +115,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
-            signupText.setVisibility(View.VISIBLE);
+            switch (msg.what) {
+                case 0:
+                    signupText.setVisibility(View.VISIBLE);
+                case 1:
+                    Intent i = new Intent(LoginActivity.this, ProfOverviewActivity.class);
+                    startActivity(i);
+            }
+
         }
     };
 
