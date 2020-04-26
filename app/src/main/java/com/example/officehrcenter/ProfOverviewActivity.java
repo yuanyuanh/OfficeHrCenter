@@ -31,8 +31,9 @@ import java.util.ArrayList;
 
 public class ProfOverviewActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private ListView listview;
     private TextView profNameText;
-    private Spinner nameSpinner;
+
     private ArrayAdapter adapter;
     private Button btn;
     private EditText editText;
@@ -57,23 +58,30 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
         btn.setOnClickListener(this);
         editText= (EditText)findViewById(R.id.editTextsearch);
 
-        nameSpinner = (Spinner)findViewById(R.id.nameSpinner);
-        nameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-            }
+        listview = (ListView)findViewById(R.id.list);
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                String s =nameList.get(position);
+                Toast.makeText(parent.getContext(), "List item selected "+s, Toast.LENGTH_LONG).show();
+                String tokens[]=s.split(" ");
+                int profid=Integer.parseInt(tokens[0]);
+                Intent intent= new Intent(ProfOverviewActivity.this , // aim class not created now
+                        BookingActivity.class);
+                intent.putExtra("profid",profid);
+                startActivity(intent);
 
             }
         });
+
+
+
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, nameList);
         adapter.setDropDownViewResource(
                 android.R.layout.simple_spinner_dropdown_item);
-        nameSpinner.setAdapter(adapter);  //connect ArrayAdapter to <Spinner>
+        listview.setAdapter(adapter);
 
         t = new Thread(background);
         t.start();
