@@ -4,6 +4,8 @@ package com.example.officehrcenter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +15,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,194 +27,151 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 
-public class ProfOverviewActivity extends AppCompatActivity implements  AdapterView.OnItemClickListener, View.OnClickListener {
 
-    String URL = "jdbc:mysql://frodo.bentley.edu:3306/officehrdb";
-    String dbusername = "harry";
-    String dbpassword = "harry";
+public class ProfOverviewActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String tag = "Widgets";
-    private CustomAdapter adapt = null;
-    private String selected;
-    private ListView listview;
-    // init empty list
-    private List<String> listoptions = new ArrayList<String>();
-    private Button searchbtn;
-    private EditText searchbox;
+    private TextView profNameText;
+    private Spinner nameSpinner;
+    private ArrayAdapter adapter;
+    private Button btn;
+    private EditText editText;
+
+    private Statement stmt = null;
+    private Connection con = null;
+
+
+    private ArrayList<String> nameList =new ArrayList<String>();
+    private ArrayList<String> backupList =new ArrayList<String>();
+
+    private Thread t = null;
+    private Toast toast;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profoverview);
-        searchbtn = (Button)findViewById(R.id.searchbtn);
-        searchbox=(EditText) findViewById(R.id.searchbox);
-        searchbtn.setOnClickListener(this);
 
-        listview = (ListView)findViewById(R.id.list);
-        listview.setOnItemClickListener(this);
-        listoptions.clear();
+        profNameText = (TextView)findViewById(R.id.profNameText);
+        btn=(Button)findViewById(R.id.search_button);
+        btn.setOnClickListener(this);
+        editText= (EditText)findViewById(R.id.editTextsearch);
 
-        // connect Mysql DBMS
-        try { //load driver into VM memory
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            Log.e("JDBC", "Did not load driver");
+        nameSpinner = (Spinner)findViewById(R.id.nameSpinner);
+        nameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-        }
-
-        Statement stmt = null;
-        Connection con = null;
-        try { //create connection and statement objects
-            con = DriverManager.getConnection(
-                    URL,
-                    dbusername,
-                    dbpassword);
-            stmt = con.createStatement();
-        } catch (SQLException e) {
-            Log.e("JDBC", "problem connecting");
-        }
-        String query = "select * from users where occupation=\'professor\';";
-        Log.e("JDBC", query);
-        try {
-            // execute SQL commands to create table, insert data, select contents
-            ResultSet result = stmt.executeQuery(query);
-
-            //read result set, add to list
-            while(result.next()){
-                int id= result.getInt("id");
-                String sid= String.valueOf(id);
-                String name= result.getString("name");
-                listoptions.add(sid+" "+name);
             }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
 
-        } catch (SQLException e) {
-            Log.e("JDBC", "problems with SQL sent to " + URL +
-                    ": " + e.getMessage());
-        } finally {
-            try { //close connection, may throw checked exception
-                if (con != null)
-                    con.close();
+            }
+        });
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, nameList);
+        adapter.setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item);
+        nameSpinner.setAdapter(adapter);  //connect ArrayAdapter to <Spinner>
+
+        t = new Thread(background);
+        t.start();
+
+
+
+    }
+
+    private Runnable background = new Runnable() {
+        public void run() {
+            String URL = "jdbc:mysql://frodo.bentley.edu:3306/officehrdb";
+            String dbusername = "harry";
+            String dbpassword = "harry";
+            try { //load driver into VM memory
+                Class.forName("com.mysql.jdbc.Driver");
+            } catch (ClassNotFoundException e) {
+                Log.e("JDBC", "Did not load driver");
+
+            }
+
+            try { //create connection and statement objects
+                con = DriverManager.getConnection(
+                        URL,
+                        dbusername,
+                        dbpassword);
+                stmt = con.createStatement();
             } catch (SQLException e) {
-                Log.e("JDBC", "close connection failed");
+                Log.e("JDBC", "problem connecting");
+            }
+
+            String query = "select * from users where occupation = \"professor\";";
+            Log.e("JDBC", query);
+
+            try {
+                // execute SQL commands to create table, insert data, select contents
+                ResultSet result = stmt.executeQuery(query);
+
+                //read result set, write data to Log
+                if (result.wasNull()) {
+                    handler.sendEmptyMessage(0);
+                } else {
+                    while (result.next()) {
+                        int id = result.getInt("id");
+                        String name = result.getString("name");
+                        nameList.add(String.valueOf(id)+" "+name);
+                        backupList.add(String.valueOf(id)+" "+name);
+
+                    }
+                    handler.sendEmptyMessage(1);
+                    System.out.println(String.valueOf(backupList.size()));
+                }
+
+            } catch (SQLException e) {
+                Log.e("JDBC", "problems with SQL sent to " + URL +
+                        ": " + e.getMessage());
+            } finally {
+                try { //close connection, may throw checked exception
+                    if (con != null)
+                        con.close();
+                } catch (SQLException e) {
+                    Log.e("JDBC", "close connection failed");
+                }
             }
         }
+    };
 
-        adapt =new CustomAdapter (this, listoptions);
-        listview.setAdapter(adapt);
-
-
-
-
-
-    }
-
-
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    toast.makeText(ProfOverviewActivity.this, "No Timeslot Available for " + profNameText.getText().toString(),
+                            Toast.LENGTH_LONG).show();
+                case 1:
 
 
+            }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String selected=adapt.getItem(position);
-        String[] tokens= selected.split(" ");
-        String selectedid= tokens[0];
-        Intent intent= new Intent(ProfOverviewActivity.this , // aim class not created now
-                 ProfOverviewActivity.class);
-        intent.putExtra("id",selectedid);
-        startActivity(intent);
+        }
+    };
 
-
-    }
 
     @Override
     public void onClick(View v) {
-        String name1= searchbox.getText().toString();
-
-        // connect Mysql DBMS
-        try { //load driver into VM memory
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            Log.e("JDBC", "Did not load driver");
-
-        }
-
-        Statement stmt = null;
-        Connection con = null;
-        try { //create connection and statement objects
-            con = DriverManager.getConnection(
-                    URL,
-                    dbusername,
-                    dbpassword);
-            stmt = con.createStatement();
-        } catch (SQLException e) {
-            Log.e("JDBC", "problem connecting");
-        }
-        String query = "select * from users where name = \'" + name1 + "\' and occupation=\'professor\';";
-        Log.e("JDBC", query);
-        try {
-            // execute SQL commands to create table, insert data, select contents
-            ResultSet result = stmt.executeQuery(query);
-
-            //read result set, add to list
-            listoptions.clear();
-            while(result.next()){
-                int id= result.getInt("id");
-                String sid= String.valueOf(id);
-                String name= result.getString("name");
-                listoptions.add(sid+" "+name);
-            }
-
-
-
-        } catch (SQLException e) {
-            Log.e("JDBC", "problems with SQL sent to " + URL +
-                    ": " + e.getMessage());
-        } finally {
-            try { //close connection, may throw checked exception
-                if (con != null)
-                    con.close();
-            } catch (SQLException e) {
-                Log.e("JDBC", "close connection failed");
+        System.out.println("Listener: "+String.valueOf(backupList.size()));
+        String s=editText.getText().toString();
+        nameList.clear();
+        for(String s1 : backupList){
+            String[] t= s1.split(" ");
+            int k=t[0].length()+1;
+            String s2=s1.substring(k);
+            System.out.println("Listener:"+s2);
+            if(s2.equals(s)){
+                nameList.add(s1);
             }
         }
-
-        adapt.notifyDataSetChanged();
-        searchbox.setText("", TextView.BufferType.EDITABLE);
+        adapter.notifyDataSetChanged();
+        Toast.makeText(this,
+                "OnClickListener : "+ String.valueOf(nameList.size()),
+                Toast.LENGTH_SHORT).show();
     }
-
-    class CustomAdapter extends ArrayAdapter<String>
-    {
-        Context context;
-        List<String> title;
-
-
-        CustomAdapter(Context c, List<String> title)
-        {
-
-            super(c, R.layout.activity_profitem,title);
-            this.context = c;
-            this.title=title;
-
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            LayoutInflater vi = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            View row = vi.inflate(R.layout.activity_profitem, parent, false);
-            TextView titlee = (TextView) row.findViewById(R.id.item1);
-            int pos = position+1;
-            titlee.setText( title.get(position));
-            pos++;
-            return row;
-        }
-
-    }
-
-
-
 }
