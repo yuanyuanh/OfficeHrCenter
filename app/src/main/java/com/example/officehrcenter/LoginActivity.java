@@ -30,6 +30,9 @@ public class LoginActivity extends AppCompatActivity {
     private Button signupButt;
     private TextView signupText;
 
+    private Statement stmt = null;
+    private Connection con = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,8 +70,6 @@ public class LoginActivity extends AppCompatActivity {
 
             }
 
-            Statement stmt = null;
-            Connection con = null;
             try { //create connection and statement objects
                 con = DriverManager.getConnection(
                         URL,
@@ -119,12 +120,24 @@ public class LoginActivity extends AppCompatActivity {
                 case 0:
                     signupText.setVisibility(View.VISIBLE);
                 case 1:
-                    Intent i = new Intent(LoginActivity.this, ProfOverviewActivity.class);
+                    Intent i = new Intent(LoginActivity.this, BookingActivity.class);
                     startActivity(i);
             }
 
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        t = null;
+        try { //close connection, may throw checked exception
+            if (con != null)
+                con.close();
+        } catch (SQLException e) {
+            Log.e("JDBC", "close connection failed");
+        }
+    }
 
 
 }
