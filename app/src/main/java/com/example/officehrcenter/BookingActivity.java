@@ -32,7 +32,9 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
     private Connection con = null;
 
     private int profId = 3;
-    private ArrayList<Date> dateList =new ArrayList<Date>();
+    private ArrayList<Date> fullDateList = new ArrayList<Date>();
+    private ArrayList<String> dateList =new ArrayList<String>();
+
 
     private Thread t = null;
     private Toast toast;
@@ -46,9 +48,8 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
         profNameText = (TextView)findViewById(R.id.profNameText);
         dateSpinner = (Spinner)findViewById(R.id.dateSpinner);
         dateSpinner.setOnItemSelectedListener(this);
-        adapter = new ArrayAdapter<Date>(this, android.R.layout.simple_spinner_item, dateList);
-        adapter.setDropDownViewResource(
-                android.R.layout.simple_spinner_dropdown_item);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dateList);
+
         dateSpinner.setAdapter(adapter);  //connect ArrayAdapter to <Spinner>
 
         t = new Thread(background);
@@ -91,8 +92,12 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
                     handler.sendEmptyMessage(0);
                 } else {
                     while (result.next()) {
-                        Date date = result.getDate("reserved_time");
-                        dateList.add(date);
+                        Date date = result.getTimestamp("reserved_time");
+                        fullDateList.add(date);
+                        String s[] = (date.toString()).split(" ");
+                        String date1 = s[0];
+                        String time = s[1];
+                        dateList.add(date1);
                     }
                     handler.sendEmptyMessage(1);
                 }
