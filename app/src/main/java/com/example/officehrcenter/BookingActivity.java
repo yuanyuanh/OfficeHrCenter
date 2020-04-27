@@ -30,8 +30,6 @@ import java.util.Iterator;
 
 public class BookingActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    static final long ONE_MINUTE_IN_MILLIS=60000;
-
     private TextView profNameText;
     private Spinner  dateSpinner;
     private ArrayAdapter adapter;
@@ -50,6 +48,9 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
 
     private Thread t = null;
     private Toast toast;
+
+    private String selectedDate;
+    private String selectedTime;
 
 
     @Override
@@ -75,40 +76,15 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
 
         t = new Thread(background);
         t.start();
-
-
     }
 
     private Runnable background = new Runnable() {
         public void run() {
-            String URL = "jdbc:mysql://frodo.bentley.edu:3306/officehrdb";
-            String dbusername = "harry";
-            String dbpassword = "harry";
-            try { //load driver into VM memory
-                Class.forName("com.mysql.jdbc.Driver");
-            } catch (ClassNotFoundException e) {
-                Log.e("JDBC", "Did not load driver");
-
-            }
-
-            try { //create connection and statement objects
-                con = DriverManager.getConnection(
-                        URL,
-                        dbusername,
-                        dbpassword);
-                stmt = con.createStatement();
-            } catch (SQLException e) {
-                Log.e("JDBC", "problem connecting");
-            }
-
+            JDBCHelper dbConn = new JDBCHelper();
+            dbConn.connenctDB();
             String query = "select * from reservation where professor_id = " + profId + " and student_id is NULL;";
-            Log.e("JDBC", query);
-
+            ResultSet result = dbConn.select(query);
             try {
-                // execute SQL commands to create table, insert data, select contents
-                ResultSet result = stmt.executeQuery(query);
-
-                //read result set, write data to Log
                 if (result.wasNull()) {
                     handler.sendEmptyMessage(0);
                 } else {
@@ -123,24 +99,44 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
                     }
                     handler.sendEmptyMessage(1);
                 }
-
             } catch (SQLException e) {
-                Log.e("JDBC", "problems with SQL sent to " + URL +
-                        ": " + e.getMessage());
-            } finally {
-                try { //close connection, may throw checked exception
-                    if (con != null)
-                        con.close();
-                } catch (SQLException e) {
-                    Log.e("JDBC", "close connection failed");
-                }
+                e.printStackTrace();
             }
+            dbConn.disConnect();
+            t = null;
         }
     };
 
     public void sendRequest(View view) {
-
+        t = new Thread(request);
+        t.start();
     }
+
+    private Runnable request = new Runnable() {
+        public void run() {
+            JDBCHelper dbConn = new JDBCHelper();
+            dbConn.connenctDB();
+
+            String reservedTime = selectedDate + " " + selectedTime + ":00";
+            String query = "update reservation set student_id=" + LoginActivity.userId + ", reserved_time=\'" +
+                    reservedTime + "\', reserved_status = \'booked\', request_time = current_timestamp(), msg = \'"
+                    + msgEdit.getText().toString() + "\' where professor_id=" + profId
+                    + " and reserved_time=\'" + reservedTime + "\' and reserved_status is null and student_id is null";
+            int count = dbConn.update(query);
+            switch (count) {
+                case 0:
+                    handler.sendEmptyMessage(2);
+                default:
+                    //TODO: back to profile activity
+                    Log.e("JDBC", "Booking succeeed");
+            }
+            dbConn.disConnect();
+            //clean up
+            t = null;
+        }
+
+    };
+
 
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
@@ -150,6 +146,9 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
                             Toast.LENGTH_LONG).show();
                 case 1:
                     adapter.notifyDataSetChanged();
+                case 2:
+                    toast.makeText(BookingActivity.this,"The time slot is occupied. Try another one.",
+                            Toast.LENGTH_LONG).show();
             }
 
         }
@@ -163,6 +162,7 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
         if (position == 0) return;
         if (sp.getId() == R.id.dateSpinner) {
             String selected = dateList.get(position);
+            selectedDate = selected;
             timeList.clear();
             timeList.add(" ");
             Iterator<Date> iter = fullDateList.iterator();
@@ -178,11 +178,11 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
             timeAdapter.notifyDataSetChanged();
         } else if (sp1.getId() == R.id.startTimeSpinner) {
             String st = timeList.get(position);
+            selectedTime = st;
             LocalTime startTime = LocalTime.parse(st);
             LocalTime endTime = startTime.plusMinutes(30);
             endTimeText.setText(endTime.toString());
         }
-
 
     }
 
