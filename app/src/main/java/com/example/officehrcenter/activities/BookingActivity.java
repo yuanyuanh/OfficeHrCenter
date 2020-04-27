@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.officehrcenter.R;
+import com.example.officehrcenter.application.App;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -28,6 +29,8 @@ import java.util.Date;
 import java.util.Iterator;
 
 public class BookingActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+
+    private App myApp;
 
     private TextView profNameText;
     private Spinner  dateSpinner;
@@ -56,6 +59,8 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking);
+        myApp = (App)getApplication();
+        Toast.makeText(this, "Dealing with id: " + myApp.getID(),Toast.LENGTH_SHORT).show();
 
         profNameText = (TextView)findViewById(R.id.profNameText);
         msgEdit = (EditText)findViewById(R.id.msgEdit);

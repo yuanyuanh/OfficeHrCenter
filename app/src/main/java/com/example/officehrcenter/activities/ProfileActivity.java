@@ -47,7 +47,7 @@ public class ProfileActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         myApp = (App)getApplication();
-        Toast.makeText(this, "" + myApp.getID(),Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Dealing with id: " + myApp.getID(),Toast.LENGTH_SHORT).show();
 
         tabHost=(TabHost)findViewById(R.id.profile);
         tabHost.setup();

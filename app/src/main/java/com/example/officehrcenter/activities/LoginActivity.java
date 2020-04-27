@@ -45,8 +45,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         myApp = (App)getApplication();
-        myApp.setID(100);
-        Toast.makeText(this, "" + myApp.getID(),Toast.LENGTH_SHORT).show();
 
         usernameText = (EditText) findViewById(R.id.userName);
         passwordText = (EditText) findViewById(R.id.password);
