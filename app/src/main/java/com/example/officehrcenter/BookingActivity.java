@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,20 +20,32 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 public class BookingActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+
+    static final long ONE_MINUTE_IN_MILLIS=60000;
 
     private TextView profNameText;
     private Spinner  dateSpinner;
     private ArrayAdapter adapter;
+    private Spinner timeSpinner;
+    private ArrayAdapter timeAdapter;
+    private EditText msgEdit;
+    private TextView endTimeText;
 
     private Statement stmt = null;
     private Connection con = null;
 
     private int profId = 3;
-    private ArrayList<Date> dateList =new ArrayList<Date>();
+    private ArrayList<Date> fullDateList = new ArrayList<Date>();
+    private ArrayList<String> dateList =new ArrayList<String>();
+    private ArrayList<String> timeList = new ArrayList<String>();
 
     private Thread t = null;
     private Toast toast;
@@ -44,12 +57,18 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
         setContentView(R.layout.activity_booking);
 
         profNameText = (TextView)findViewById(R.id.profNameText);
+        msgEdit = (EditText)findViewById(R.id.msgEdit);
+        endTimeText = (TextView)findViewById(R.id.endTimeText);
+
         dateSpinner = (Spinner)findViewById(R.id.dateSpinner);
         dateSpinner.setOnItemSelectedListener(this);
-        adapter = new ArrayAdapter<Date>(this, android.R.layout.simple_spinner_item, dateList);
-        adapter.setDropDownViewResource(
-                android.R.layout.simple_spinner_dropdown_item);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dateList);
         dateSpinner.setAdapter(adapter);  //connect ArrayAdapter to <Spinner>
+
+        timeSpinner = (Spinner)findViewById(R.id.startTimeSpinner);
+        timeSpinner.setOnItemSelectedListener(this);
+        timeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, timeList);
+        timeSpinner.setAdapter(timeAdapter);
 
         t = new Thread(background);
         t.start();
@@ -91,8 +110,13 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
                     handler.sendEmptyMessage(0);
                 } else {
                     while (result.next()) {
-                        Date date = result.getDate("reserved_time");
-                        dateList.add(date);
+                        Date date = result.getTimestamp("reserved_time");
+                        fullDateList.add(date);
+                        String s[] = (date.toString()).split(" ");
+                        String date1 = s[0];
+                        if (dateList.contains(date1) == false) {
+                            dateList.add(date1);
+                        }
                     }
                     handler.sendEmptyMessage(1);
                 }
@@ -118,6 +142,7 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
                     toast.makeText(BookingActivity.this, "No Timeslot Available for " + profNameText.getText().toString(),
                             Toast.LENGTH_LONG).show();
                 case 1:
+                    adapter.notifyDataSetChanged();
 
 
             }
@@ -127,7 +152,24 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Spinner sp = (Spinner)parent;
+        String selected = dateList.get(position);
+        timeList.clear();
+        switch (sp.getId()) {
+            case R.id.dateSpinner:
+                Iterator<Date> iter = fullDateList.iterator();
+                while (iter.hasNext()) {
+                    Date d = iter.next();
+                    String str[] = d.toString().split(" ");
+                    String date = str[0];
+                    if (date.equals(selected)) {
+                        String time = str[1].substring(0, 5);
+                        timeList.add(time);
+                    }
+                }
+                timeAdapter.notifyDataSetChanged();
 
+        }
     }
 
     @Override
