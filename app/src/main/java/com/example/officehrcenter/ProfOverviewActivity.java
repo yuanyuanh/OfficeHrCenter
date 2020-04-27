@@ -32,7 +32,6 @@ import java.util.ArrayList;
 public class ProfOverviewActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ListView listview;
-    private TextView profNameText;
 
     private ArrayAdapter adapter;
     private Button btn;
@@ -47,6 +46,19 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
 
     private Thread t = null;
     private Toast toast;
+
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    toast.makeText(ProfOverviewActivity.this, "No Prof. available",
+                            Toast.LENGTH_LONG).show();
+                case 1:
+                    adapter.notifyDataSetChanged();
+            }
+
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,7 +76,7 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 String s =nameList.get(position);
-                Toast.makeText(parent.getContext(), "List item selected "+s, Toast.LENGTH_LONG).show();
+                //Toast.makeText(parent.getContext(), "List item selected "+s, Toast.LENGTH_LONG).show();
                 String tokens[]=s.split(" ");
                 int pos = s.indexOf(" ");
                 String name = s.substring(pos+1);
@@ -149,19 +161,6 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
                     Log.e("JDBC", "close connection failed");
                 }
             }
-        }
-    };
-
-    private Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    toast.makeText(ProfOverviewActivity.this, "No Timeslot Available for " + profNameText.getText().toString(),
-                            Toast.LENGTH_LONG).show();
-                case 1:
-                    adapter.notifyDataSetChanged();
-            }
-
         }
     };
 
