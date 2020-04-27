@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -60,11 +61,13 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
         msgEdit = (EditText)findViewById(R.id.msgEdit);
         endTimeText = (TextView)findViewById(R.id.endTimeText);
 
+        dateList.add(" ");
         dateSpinner = (Spinner)findViewById(R.id.dateSpinner);
         dateSpinner.setOnItemSelectedListener(this);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dateList);
         dateSpinner.setAdapter(adapter);  //connect ArrayAdapter to <Spinner>
 
+        timeList.add(" ");
         timeSpinner = (Spinner)findViewById(R.id.startTimeSpinner);
         timeSpinner.setOnItemSelectedListener(this);
         timeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, timeList);
@@ -135,6 +138,10 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
         }
     };
 
+    public void sendRequest(View view) {
+
+    }
+
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -143,8 +150,6 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
                             Toast.LENGTH_LONG).show();
                 case 1:
                     adapter.notifyDataSetChanged();
-
-
             }
 
         }
@@ -153,27 +158,38 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         Spinner sp = (Spinner)parent;
-        String selected = dateList.get(position);
-        timeList.clear();
-        switch (sp.getId()) {
-            case R.id.dateSpinner:
-                Iterator<Date> iter = fullDateList.iterator();
-                while (iter.hasNext()) {
-                    Date d = iter.next();
-                    String str[] = d.toString().split(" ");
-                    String date = str[0];
-                    if (date.equals(selected)) {
-                        String time = str[1].substring(0, 5);
-                        timeList.add(time);
-                    }
-                }
-                timeAdapter.notifyDataSetChanged();
+        Spinner sp1 = (Spinner)parent;
 
+        if (position == 0) return;
+        if (sp.getId() == R.id.dateSpinner) {
+            String selected = dateList.get(position);
+            timeList.clear();
+            timeList.add(" ");
+            Iterator<Date> iter = fullDateList.iterator();
+            while (iter.hasNext()) {
+                Date d = iter.next();
+                String str[] = d.toString().split(" ");
+                String date = str[0];
+                if (date.equals(selected)) {
+                    String time = str[1].substring(0, 5);
+                    timeList.add(time);
+                }
+            }
+            timeAdapter.notifyDataSetChanged();
+        } else if (sp1.getId() == R.id.startTimeSpinner) {
+            String st = timeList.get(position);
+            LocalTime startTime = LocalTime.parse(st);
+            LocalTime endTime = startTime.plusMinutes(30);
+            endTimeText.setText(endTime.toString());
         }
+
+
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
+
 }

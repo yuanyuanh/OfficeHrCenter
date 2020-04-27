@@ -43,14 +43,16 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:minHeight="40dp">
 
             <TextView
                 android:id="@+id/textView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Date"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
 
             <Spinner
                 android:id="@+id/dateSpinner"
@@ -60,7 +62,8 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:minHeight="40dp">
 
             <TextView
                 android:id="@+id/textView9"
@@ -68,6 +71,7 @@
                 android:layout_height="wrap_content"
                 android:text="Start Time"
                 android:textColor="@android:color/black"
+                android:textSize="18sp"
                 android:visibility="visible" />
 
             <Spinner
@@ -79,20 +83,23 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:minHeight="40dp">
 
             <TextView
                 android:id="@+id/textView10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="End Time"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/endTimeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAlignment="viewStart" />
+                android:textAlignment="viewStart"
+                android:textSize="18sp" />
 
         </TableRow>
 
@@ -105,7 +112,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Message"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
 
             <MultiAutoCompleteTextView
                 android:id="@+id/msgEdit"
