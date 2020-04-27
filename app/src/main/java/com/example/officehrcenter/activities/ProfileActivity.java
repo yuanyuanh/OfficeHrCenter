@@ -1,4 +1,4 @@
-package com.example.officehrcenter;
+package com.example.officehrcenter.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,6 +20,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import com.example.officehrcenter.R;
 
 public class ProfileActivity extends Activity {
 

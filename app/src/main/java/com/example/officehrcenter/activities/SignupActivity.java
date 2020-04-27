@@ -1,4 +1,4 @@
-package com.example.officehrcenter;
+package com.example.officehrcenter.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.officehrcenter.R;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
