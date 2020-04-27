@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -38,6 +40,10 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
     private TextView occupationTip;
     private TextView officeTip;
     private TextView usernameInvalidTip;
+    private EditText phoneEdit;
+    private EditText emailEdit;
+    private TextView phoneText;
+    private TextView emailText;
     private int checkId;
 
     private Thread t = null;
@@ -68,6 +74,12 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
         nameTip = (TextView)findViewById(R.id.nameTip);
         occupationTip = (TextView)findViewById(R.id.occupationTIp);
         officeTip = (TextView)findViewById(R.id.officeTip);
+        emailEdit = (EditText)findViewById(R.id.emailEdit);
+        phoneEdit = (EditText)findViewById(R.id.phoneEdit);
+        emailText = (TextView)findViewById(R.id.emailText);
+        phoneText = (TextView)findViewById(R.id.phoneText);
+        usernameInvalidTip = (TextView)findViewById(R.id.reuernameTip);
+
 
         toast.makeText(this, "Sign up failed. Please try again.", Toast.LENGTH_LONG);
     }
@@ -78,9 +90,18 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
         if (checkedId == R.id.rbProf) {
             officeEdit.setVisibility(View.VISIBLE);
             officeText.setVisibility(View.VISIBLE);
+            emailEdit.setVisibility(View.VISIBLE);
+            phoneEdit.setVisibility(View.VISIBLE);
+            emailText.setVisibility(View.VISIBLE);
+            phoneText.setVisibility(View.VISIBLE);
         } else {
             officeText.setVisibility(View.INVISIBLE);
             officeEdit.setVisibility(View.INVISIBLE);
+            emailEdit.setVisibility(View.INVISIBLE);
+            phoneEdit.setVisibility(View.INVISIBLE);
+            emailText.setVisibility(View.INVISIBLE);
+            phoneText.setVisibility(View.INVISIBLE);
+            officeTip.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -123,125 +144,56 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
 
     }
 
-    private Runnable background = new Runnable() {
-        public void run() {
-            String URL = "jdbc:mysql://frodo.bentley.edu:3306/officehrdb";
-            String dbusername = "harry";
-            String dbpassword = "harry";
-
-            try { //load driver into VM memory
-                Class.forName("com.mysql.jdbc.Driver");
-            } catch (ClassNotFoundException e) {
-                Log.e("JDBC", "Did not load driver");
-
-            }
-
-            try { //create connection and statement objects
-                con = DriverManager.getConnection(
-                        URL,
-                        dbusername,
-                        dbpassword);
-                stmt = con.createStatement();
-            } catch (SQLException e) {
-                Log.e("JDBC", "problem connecting");
-            }
-
-            String query = "select * from users where username=\'" + usernameEdit.getText().toString() + "\';";
-            Log.e("JDBC", query);
-            try {
-                // execute SQL commands to create table, insert data, select contents
-                ResultSet result = stmt.executeQuery(query);
-
-                //read result set, write data to Log
-
-                if (result.next() == false) {
-                    Log.e("JDBC", "No users found");
-                    String updateStm = "insert into users (username, password, name, occupation";
-                    if (checkId == R.id.rbStudent) {
-                        updateStm += ")";
-                    } else {
-                        updateStm += ", office)";
-                    }
-                    updateStm += " values(\'" + usernameEdit.getText().toString() +
-                            "\', \'" + passwordEdit.getText().toString() + "\', \'" + nameEdit.getText().toString() +
-                            "\', \'";
-                    if (occupationGroup.getCheckedRadioButtonId() == R.id.rbProf) {
-                        updateStm += "professor" + "\', \'" + officeEdit.getText().toString() + "\');";
-                    } else {
-                        updateStm += "student\');";
-                    }
-                    Log.e("JDBC", updateStm);
-                    int sqlStatus = stmt.executeUpdate(updateStm);
-                    //check update status
-                    if (sqlStatus > 0) {
-                        Message msg = handler.obtainMessage();
-                        Bundle bundle = new Bundle();
-                        bundle.putString(SIGNUPMSG, "SUCCESS");
-                        msg.setData(bundle);
-                        handler.sendMessage(msg);
-                    } else {
-                        Message msg = handler.obtainMessage();
-                        Bundle bundle = new Bundle();
-                        bundle.putString(SIGNUPMSG, "failed.");
-                        msg.setData(bundle);
-                        handler.sendMessage(msg);
-                    }
-                } else {
-                    Log.e("JDBC", "success connection");
-                    Message msg = handler.obtainMessage();
-                    Bundle bundle = new Bundle();
-                    bundle.putString(SIGNUPMSG, "username existed");
-                    msg.setData(bundle);
-                    handler.sendMessage(msg);
-                }
-
-                //clean up
-                t = null;
-
-            } catch (SQLException e) {
-                Log.e("JDBC", "problems with SQL sent to " + URL +
-                        ": " + e.getMessage());
-            } finally {
-                try { //close connection, may throw checked exception
-                    if (con != null)
-                        con.close();
-                } catch (SQLException e) {
-                    Log.e("JDBC", "close connection failed");
-                }
-            }
-
-        }
-    };
-
-    private Handler handler = new Handler() {
-        @SuppressLint("HandlerLeak")
+    private Handler signUpHandler = new Handler() {
         public void handleMessage(Message msg) {
-            Bundle bundle = msg.getData();
-            String str = bundle.getString(SIGNUPMSG);
-            switch (str) {
-                case success:
-                    Log.e("JDBC", "called");
+            switch (msg.what) {
+                case 0:
+                    Log.e("JDBC", "Sign up succeeded");
                     finish();
                     break;
-                case fail:
-                    toast.show();
-                    break;
-                case taken:
+                case 1:
                     usernameInvalidTip.setVisibility(View.VISIBLE);
             }
+        }
+    };
+
+    private Runnable background = new Runnable() {
+        public void run() {
+            JDBCHelper dbConn = new JDBCHelper();
+            dbConn.connenctDB();
+            // construct query based on occupation
+            String updateStm = "insert into users (username, password, name, occupation";
+            if (checkId == R.id.rbStudent) {
+                updateStm += ")";
+            } else {
+                updateStm += ", office, email, phone)";
+            }
+            updateStm += " values(\'" + usernameEdit.getText().toString() +
+                    "\', \'" + passwordEdit.getText().toString() + "\', \'" + nameEdit.getText().toString() +
+                    "\', \'";
+            if (occupationGroup.getCheckedRadioButtonId() == R.id.rbProf) {
+                updateStm += "professor" + "\', \'" + officeEdit.getText().toString() + "\', \'" + emailEdit.getText().toString()
+                        + "\', \'" + phoneEdit.getText().toString() + "\');";
+            } else {
+                updateStm += "student\');";
+            }
+            int count = dbConn.update(updateStm);
+            if (count > 0) {
+                signUpHandler.sendEmptyMessage(0);
+            } else {
+                signUpHandler.sendEmptyMessage(1);
+            }
+            dbConn.disConnect();
+            t = null;
 
         }
     };
+
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         t = null;
-        try { //close connection, may throw checked exception
-            if (con != null)
-                con.close();
-        } catch (SQLException e) {
-            Log.e("JDBC", "close connection failed");
-        }
     }
 }
