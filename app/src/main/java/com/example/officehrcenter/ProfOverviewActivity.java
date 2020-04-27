@@ -53,7 +53,6 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profoverview);
 
-        profNameText = (TextView)findViewById(R.id.profNameText);
         btn=(Button)findViewById(R.id.search_button);
         btn.setOnClickListener(this);
         editText= (EditText)findViewById(R.id.editTextsearch);
@@ -67,10 +66,15 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
                 String s =nameList.get(position);
                 Toast.makeText(parent.getContext(), "List item selected "+s, Toast.LENGTH_LONG).show();
                 String tokens[]=s.split(" ");
+                int pos = s.indexOf(" ");
+                String name = s.substring(pos+1);
                 int profid=Integer.parseInt(tokens[0]);
                 Intent intent= new Intent(ProfOverviewActivity.this , // aim class not created now
                         BookingActivity.class);
-                intent.putExtra("profid",profid);
+                Bundle bundle = new Bundle();
+                bundle.putInt("profId", profid);
+                bundle.putString("profName", name);
+                intent.putExtras(bundle);
                 startActivity(intent);
 
             }

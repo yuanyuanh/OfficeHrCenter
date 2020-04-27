@@ -41,7 +41,7 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
     private Statement stmt = null;
     private Connection con = null;
 
-    private int profId = 3;
+    private int profId;
     private ArrayList<Date> fullDateList = new ArrayList<Date>();
     private ArrayList<String> dateList =new ArrayList<String>();
     private ArrayList<String> timeList = new ArrayList<String>();
@@ -73,6 +73,11 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
         timeSpinner.setOnItemSelectedListener(this);
         timeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, timeList);
         timeSpinner.setAdapter(timeAdapter);
+
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        profId = bundle.getInt("profId");
+        profNameText.setText(bundle.getString("profName"));
 
         t = new Thread(background);
         t.start();
