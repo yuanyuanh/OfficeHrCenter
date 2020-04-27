@@ -2,14 +2,21 @@ package com.example.officehrcenter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,11 +28,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class ProfileActivity extends Activity {
+public class ProfileActivity extends AppCompatActivity {
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
 
     private TabHost tabHost;
     private ListView upcominglistview;
     private ListView historylistview;
+    private String emailaddress;
+    private String emaildate;
     private int studentid;
     private Statement stmt = null;
     private Connection con = null;
@@ -62,6 +76,18 @@ public class ProfileActivity extends Activity {
         upcominglistview = (ListView)findViewById(R.id.upcominglist);
         historylistview = (ListView)findViewById(R.id.historylist);
 
+        //store email and date when click
+        upcominglistview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String s =upcomingList.get(position);
+                String tokens[]=s.split(" ");
+                emailaddress= tokens[tokens.length-1];
+                emaildate=tokens[1]+" "+tokens[2];
+            }
+        });
 
 
 
@@ -122,18 +148,18 @@ public class ProfileActivity extends Activity {
                 } else {
                     while (result.next()) {
                         String name = result.getString("name");
-
+                        String email=result.getString("email");
                         Date date = result.getTimestamp("reserved_time");
                         Date now= new Date();
                         String strDate = dateFormat.format(date);
                         System.out.println(name + "  "+ strDate);
                         if(now.compareTo(date)>=0){
                             //history
-                            historyList.add("Time: "+strDate+" Professor: "+name);
+                            historyList.add("Time: "+strDate+" Professor: "+name+" Email: "+ email);
 
                         }else{
                             //upcoming
-                            upcomingList.add("Time: "+strDate+" Professor: "+name);
+                            upcomingList.add("Time: "+strDate+" Professor: "+name+" Email: "+ email);
                         }
                         System.out.println(historyList.size());
                         System.out.println(upcomingList.size());
@@ -165,13 +191,44 @@ public class ProfileActivity extends Activity {
 
                     System.out.println("no reservation history");
                 case 1:
-
+                    upcomingadapter.notifyDataSetChanged();
+                    historyadapter.notifyDataSetChanged();
                     System.out.println("has reservation history");
 
             }
 
         }
     };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+
+            //go to booking activity
+            case R.id.booking:
+                Intent i= new Intent(ProfileActivity.this, ProfOverviewActivity.class);
+                i.putExtra("studentid",studentid);
+                startActivity(i);
+                return true;
+
+            //send email
+            case R.id.email:
+                if(!emailaddress.isEmpty()){
+                    Intent msg = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
+                    msg.putExtra(Intent.EXTRA_EMAIL, emailaddress);
+                    msg.putExtra(Intent.EXTRA_TEXT, "Reminder: You have an appointment on"+emaildate);
+                    msg.putExtra(Intent.EXTRA_SUBJECT, "Appointment Reminder");
+                    if (msg.resolveActivity(getPackageManager()) != null) {
+                        startActivity(msg);
+                    }
+                    return true;
+                }
+
+
+        }
+
+        return true;
+    }
 
 
 }

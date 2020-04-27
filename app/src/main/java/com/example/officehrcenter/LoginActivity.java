@@ -23,6 +23,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public static final int requestCode_235 = 235;
     public static int userId;
+    public String occupation="123";
 
     private Thread t = null;
     private EditText usernameText;
@@ -96,6 +97,8 @@ public class LoginActivity extends AppCompatActivity {
                     handler.sendEmptyMessage(0);
                 } else {
                     userId = result.getInt("id");
+                    occupation=result.getString("occupation");
+
                     Log.e("JDBC", "success connection");
                     handler.sendEmptyMessage(1);
                 }
@@ -125,8 +128,16 @@ public class LoginActivity extends AppCompatActivity {
                     signupText.setVisibility(View.VISIBLE);
                 case 1:
                     //Intent i = new Intent(LoginActivity.this, BookingActivity.class);
-                    Intent i = new Intent(LoginActivity.this, ProfOverviewActivity.class);
-                    startActivity(i);
+                    if(occupation.equals("student")){
+                        Intent i = new Intent(LoginActivity.this, ProfileActivity.class);
+                        i.putExtra("studentid",userId);
+                        startActivity(i);
+                    }else if(occupation.equals("professor")){
+                        // identity professor
+                    }else{
+                        System.out.println("identity denied");
+                    }
+
             }
 
         }

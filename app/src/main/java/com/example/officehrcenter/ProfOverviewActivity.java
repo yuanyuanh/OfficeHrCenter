@@ -33,6 +33,7 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
 
     private ListView listview;
     private TextView profNameText;
+    private int studentid;
 
     private ArrayAdapter adapter;
     private Button btn;
@@ -52,6 +53,8 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profoverview);
+        Intent intent=getIntent();
+        studentid=intent.getIntExtra("studentid",0);
 
         profNameText = (TextView)findViewById(R.id.profNameText);
         btn=(Button)findViewById(R.id.search_button);
@@ -71,6 +74,7 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
                 Intent intent= new Intent(ProfOverviewActivity.this , // aim class not created now
                         BookingActivity.class);
                 intent.putExtra("profid",profid);
+                intent.putExtra("studentid",studentid);
                 startActivity(intent);
 
             }
