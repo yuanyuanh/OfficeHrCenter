@@ -18,10 +18,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.officehrcenter.R;
+import com.example.officehrcenter.application.App;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private App myApp;
 
     public static final int requestCode_235 = 235;
     public static int userId;
@@ -40,6 +44,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        myApp = (App)getApplication();
+        myApp.setID(100);
+        Toast.makeText(this, "" + myApp.getID(),Toast.LENGTH_SHORT).show();
 
         usernameText = (EditText) findViewById(R.id.userName);
         passwordText = (EditText) findViewById(R.id.password);
@@ -51,8 +58,8 @@ public class LoginActivity extends AppCompatActivity {
     public void login(View view) {
         t = new Thread(background);
         t.start();
-//        Intent i = new Intent(this, ProfOverviewActivity.class);
-//        startActivity(i);
+        // Intent i = new Intent(this, ProfileActivity.class);
+        // startActivity(i);
     }
 
     public void signUp(View view) {
@@ -98,6 +105,7 @@ public class LoginActivity extends AppCompatActivity {
                     handler.sendEmptyMessage(0);
                 } else {
                     userId = result.getInt("id");
+                    myApp.setID(userId);
                     Log.e("JDBC", "success connection");
                     handler.sendEmptyMessage(1);
                 }
@@ -127,10 +135,9 @@ public class LoginActivity extends AppCompatActivity {
                     signupText.setVisibility(View.VISIBLE);
                 case 1:
                     //Intent i = new Intent(LoginActivity.this, BookingActivity.class);
-                    Intent i = new Intent(LoginActivity.this, ProfOverviewActivity.class);
+                    Intent i = new Intent(LoginActivity.this, ProfileActivity.class);
                     startActivity(i);
             }
-
         }
     };
 
