@@ -1,4 +1,4 @@
-package com.example.officehrcenter;
+package com.example.officehrcenter.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -21,7 +21,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.example.officehrcenter.R;
+import com.example.officehrcenter.application.App;
+
 public class ProfileActivity extends Activity {
+
+    private App myApp;
 
     private TabHost tabHost;
     private ListView upcominglistview;
@@ -41,6 +46,8 @@ public class ProfileActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        myApp = (App)getApplication();
+        Toast.makeText(this, "" + myApp.getID(),Toast.LENGTH_SHORT).show();
 
         tabHost=(TabHost)findViewById(R.id.profile);
         tabHost.setup();
@@ -85,8 +92,7 @@ public class ProfileActivity extends Activity {
 
     private Runnable background = new Runnable() {
         public void run() {
-            Intent intent=getIntent();
-            studentid=intent.getIntExtra("studentid",0);
+
             DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
             System.out.println("studentid"+ studentid);
             String URL = "jdbc:mysql://frodo.bentley.edu:3306/officehrdb";
@@ -109,7 +115,7 @@ public class ProfileActivity extends Activity {
                 Log.e("JDBC", "problem connecting");
             }
 
-            String query = "select * from reservation join users on reservation.professor_id=users.id where student_id ="+String.valueOf(studentid)+" ;";
+            String query = "select * from reservation join users on reservation.professor_id=users.id where student_id ="+String.valueOf(myApp.getID())+" ;";
             Log.e("JDBC", query);
 
             try {
