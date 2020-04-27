@@ -131,10 +131,13 @@ public class LoginActivity extends AppCompatActivity {
             switch (msg.what) {
                 case 0:
                     signupText.setVisibility(View.VISIBLE);
+                    break;
                 case 1:
                     //Intent i = new Intent(LoginActivity.this, BookingActivity.class);
                     Intent i = new Intent(LoginActivity.this, ProfileActivity.class);
                     startActivity(i);
+                    finish();
+                    break;
             }
         }
     };
