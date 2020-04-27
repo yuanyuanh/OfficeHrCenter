@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,8 +29,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 
-public class BookingActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class BookingActivity extends AppCompatActivity implements TextToSpeech.OnInitListener, AdapterView.OnItemSelectedListener {
 
     private App myApp;
 
@@ -42,8 +44,7 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
     private TextView endTimeText;
     private Button sendButt;
 
-    private Statement stmt = null;
-    private Connection con = null;
+    private TextToSpeech speaker;
 
     private int profId;
     private ArrayList<Date> fullDateList = new ArrayList<Date>();
@@ -101,6 +102,9 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
         profId = bundle.getInt("profId");
         profNameText.setText(bundle.getString("profName"));
 
+        //Initialize Text to Speech engine (context, listener object)
+        speaker = new TextToSpeech(this, this);
+
         t = new Thread(background);
         t.start();
     }
@@ -136,6 +140,18 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
 
     public void sendRequest(View view) {
         Log.e("JDBC", "button clicked");
+        if (!(msgEdit.getText().toString().isEmpty())) {
+            // if speaker is talking, stop it
+            if(speaker.isSpeaking()){
+                Log.i("Speaker", "Speaker Speaking");
+                speaker.stop();
+                // else start speech
+            } else {
+                Log.i("Speaker", "Speaker Not Already Speaking");
+                speak("Your message is: " + msgEdit.getText().toString());
+            }
+        }
+
         t = new Thread(request);
         t.start();
     }
@@ -204,5 +220,42 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
 
     }
 
+    //speak methods will send text to be spoken
+    public void speak(String output){
+        //	speaker.speak(output, TextToSpeech.QUEUE_FLUSH, null);  //for APIs before 21
+        speaker.speak(output, TextToSpeech.QUEUE_FLUSH, null, "Id 0");
+    }
 
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+            // Set preferred language to US english.
+            // If a language is not be available, the result will indicate it.
+            int result = speaker.setLanguage(Locale.US);
+
+            //int result = speaker.setLanguage(Locale.FRANCE);
+            if (result == TextToSpeech.LANG_MISSING_DATA ||
+                    result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                // Language data is missing or the language is not supported.
+                Log.e("Speak", "Language is not available.");
+            } else {
+                // The TTS engine has been successfully initialized
+                speak("Please enter your bill amount");
+                Log.i("Speaker", "TTS Initialization successful.");
+            }
+        } else {
+            // Initialization failed.
+            Log.e("Speaker", "Could not initialize TextToSpeech.");
+        }
+    }
+
+    public void onDestroy(){
+
+        // shut down TTS engine
+        if(speaker != null){
+            speaker.stop();
+            speaker.shutdown();
+        }
+        super.onDestroy();
+    }
 }
