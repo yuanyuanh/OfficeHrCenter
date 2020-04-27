@@ -155,8 +155,7 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
                     toast.makeText(ProfOverviewActivity.this, "No Timeslot Available for " + profNameText.getText().toString(),
                             Toast.LENGTH_LONG).show();
                 case 1:
-
-
+                    adapter.notifyDataSetChanged();
             }
 
         }
