@@ -30,27 +30,6 @@
                 android:textSize="24sp" />
 
 
-
-
-                <TableLayout
-                    android:id="@+id/tableLayout2"
-                    android:layout_width="350dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginEnd="32dp">
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                        <EditText
-                            android:id="@+id/editTextsearch"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ems="10"
-                            android:inputType="textPersonName" />
-                    </TableRow>
-                </TableLayout>
                 <ListView
                     android:id="@+id/upcominglist"
                     android:layout_width="match_parent"
@@ -74,28 +53,6 @@
                     android:text="History Reservation"
                     android:textSize="24sp" />
 
-
-
-
-                <TableLayout
-                    android:id="@+id/tableLayout3"
-                    android:layout_width="350dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginEnd="32dp">
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                        <EditText
-                            android:id="@+id/editTextsearch2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ems="10"
-                            android:inputType="textPersonName" />
-                    </TableRow>
-                </TableLayout>
                 <ListView
                     android:id="@+id/historylist"
                     android:layout_width="match_parent"

@@ -1,4 +1,4 @@
-package com.example.officehrcenter;
+package com.example.officehrcenter.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,6 +27,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import com.example.officehrcenter.R;
+import com.example.officehrcenter.application.App;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -35,6 +37,7 @@ public class ProfileActivity extends AppCompatActivity {
         return true;
     }
 
+    private App myApp;
     private TabHost tabHost;
     private ListView upcominglistview;
     private ListView historylistview;
@@ -56,6 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        myApp = (App)getApplication();
         tabHost=(TabHost)findViewById(R.id.profile);
         tabHost.setup();
 
@@ -112,7 +116,9 @@ public class ProfileActivity extends AppCompatActivity {
     private Runnable background = new Runnable() {
         public void run() {
             Intent intent=getIntent();
-            studentid=intent.getIntExtra("studentid",0);
+            studentid=myApp.getID();
+            System.out.println(studentid);
+
             DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
             System.out.println("studentid"+ studentid);
             String URL = "jdbc:mysql://frodo.bentley.edu:3306/officehrdb";

@@ -1,25 +1,23 @@
-package com.example.officehrcenter;
+package com.example.officehrcenter.activities;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.officehrcenter.R;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -32,8 +30,6 @@ import java.util.ArrayList;
 public class ProfOverviewActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ListView listview;
-    private TextView profNameText;
-    private int studentid;
 
     private ArrayAdapter adapter;
     private Button btn;
@@ -49,14 +45,24 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
     private Thread t = null;
     private Toast toast;
 
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    toast.makeText(ProfOverviewActivity.this, "No Prof. available",
+                            Toast.LENGTH_LONG).show();
+                case 1:
+                    adapter.notifyDataSetChanged();
+            }
+
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profoverview);
-        Intent intent=getIntent();
-        studentid=intent.getIntExtra("studentid",0);
 
-        profNameText = (TextView)findViewById(R.id.profNameText);
         btn=(Button)findViewById(R.id.search_button);
         btn.setOnClickListener(this);
         editText= (EditText)findViewById(R.id.editTextsearch);
@@ -68,13 +74,17 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 String s =nameList.get(position);
-                Toast.makeText(parent.getContext(), "List item selected "+s, Toast.LENGTH_LONG).show();
+                //Toast.makeText(parent.getContext(), "List item selected "+s, Toast.LENGTH_LONG).show();
                 String tokens[]=s.split(" ");
+                int pos = s.indexOf(" ");
+                String name = s.substring(pos+1);
                 int profid=Integer.parseInt(tokens[0]);
                 Intent intent= new Intent(ProfOverviewActivity.this , // aim class not created now
                         BookingActivity.class);
-                intent.putExtra("profid",profid);
-                intent.putExtra("studentid",studentid);
+                Bundle bundle = new Bundle();
+                bundle.putInt("profId", profid);
+                bundle.putString("profName", name);
+                intent.putExtras(bundle);
                 startActivity(intent);
 
             }
@@ -149,19 +159,6 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
                     Log.e("JDBC", "close connection failed");
                 }
             }
-        }
-    };
-
-    private Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    toast.makeText(ProfOverviewActivity.this, "No Timeslot Available for " + profNameText.getText().toString(),
-                            Toast.LENGTH_LONG).show();
-                case 1:
-                    adapter.notifyDataSetChanged();
-            }
-
         }
     };
 
