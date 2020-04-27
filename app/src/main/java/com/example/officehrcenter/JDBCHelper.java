@@ -48,6 +48,20 @@ public class JDBCHelper {
         return result;
     }
 
+    public int update(String query) {
+        int count = 0;
+        try {
+            Log.e("JDBC", query);
+            // execute SQL commands to create table, insert data, select contents
+            count = stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            Log.e("JDBC", "problems with SQL sent to " + URL +
+                    ": " + e.getMessage());
+        }
+        Log.e("JDBC", "Count " + count);
+        return count;
+    }
+
     public void disConnect() {
         try { //close connection, may throw checked exception
             if (con != null)

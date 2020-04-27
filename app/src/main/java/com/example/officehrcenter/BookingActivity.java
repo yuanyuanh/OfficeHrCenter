@@ -114,59 +114,26 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
 
     private Runnable request = new Runnable() {
         public void run() {
-            String URL = "jdbc:mysql://frodo.bentley.edu:3306/officehrdb";
-            String dbusername = "harry";
-            String dbpassword = "harry";
-            try { //load driver into VM memory
-                Class.forName("com.mysql.jdbc.Driver");
-            } catch (ClassNotFoundException e) {
-                Log.e("JDBC", "Did not load driver");
+            JDBCHelper dbConn = new JDBCHelper();
+            dbConn.connenctDB();
 
-            }
-
-            try { //create connection and statement objects
-                con = DriverManager.getConnection(
-                        URL,
-                        dbusername,
-                        dbpassword);
-                stmt = con.createStatement();
-            } catch (SQLException e) {
-                Log.e("JDBC", "problem connecting");
-            }
-
-            String reservedTime = selectedDate + " " + selectedTime;
+            String reservedTime = selectedDate + " " + selectedTime + ":00";
             String query = "update reservation set student_id=" + LoginActivity.userId + ", reserved_time=\'" +
                     reservedTime + "\', reserved_status = \'booked\', request_time = current_timestamp(), msg = \'"
                     + msgEdit.getText().toString() + "\' where professor_id=" + profId
-                    + " and request_time=\'" + reservedTime + "\' and reserved_status is null and student_id is null";
-            Log.e("JDBC", query);
-            try {
-                // execute SQL commands to create table, insert data, select contents
-                int sqlStatus = stmt.executeUpdate(query);
-                switch (sqlStatus) {
-                    case 0:
-                        handler.sendEmptyMessage(2);
-                    default:
-                        //TODO: back to profile activity
-                        Log.e("JDBC", "Booking succeeed");
-                }
-                //clean up
-                t = null;
-
-            } catch (SQLException e) {
-                Log.e("JDBC", "problems with SQL sent to " + URL +
-                        ": " + e.getMessage());
-            } finally {
-                try { //close connection, may throw checked exception
-                    if (con != null)
-                        con.close();
-                } catch (SQLException e) {
-                    Log.e("JDBC", "close connection failed");
-                }
+                    + " and reserved_time=\'" + reservedTime + "\' and reserved_status is null and student_id is null";
+            int count = dbConn.update(query);
+            switch (count) {
+                case 0:
+                    handler.sendEmptyMessage(2);
+                default:
+                    //TODO: back to profile activity
+                    Log.e("JDBC", "Booking succeeed");
             }
-
+            dbConn.disConnect();
+            //clean up
+            t = null;
         }
-
 
     };
 
