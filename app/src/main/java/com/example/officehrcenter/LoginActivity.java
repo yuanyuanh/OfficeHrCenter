@@ -22,6 +22,7 @@ import android.widget.TextView;
 public class LoginActivity extends AppCompatActivity {
 
     public static final int requestCode_235 = 235;
+    public static int userId;
 
     private Thread t = null;
     private EditText usernameText;
@@ -94,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                     Log.e("JDBC", "No users found");
                     handler.sendEmptyMessage(0);
                 } else {
+                    userId = result.getInt("id");
                     Log.e("JDBC", "success connection");
                     handler.sendEmptyMessage(1);
                 }
