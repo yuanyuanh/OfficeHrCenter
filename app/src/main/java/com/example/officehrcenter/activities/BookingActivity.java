@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -39,6 +40,7 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
     private ArrayAdapter timeAdapter;
     private EditText msgEdit;
     private TextView endTimeText;
+    private Button sendButt;
 
     private Statement stmt = null;
     private Connection con = null;
@@ -49,10 +51,25 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
     private ArrayList<String> timeList = new ArrayList<String>();
 
     private Thread t = null;
-    private Toast toast;
 
     private String selectedDate;
     private String selectedTime;
+
+    private Handler bookingHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            int i = msg.what;
+            if (i == 0) {
+                Toast.makeText(BookingActivity.this, "No Timeslot Available for " + profNameText.getText().toString(),
+                        Toast.LENGTH_LONG).show();
+            } else if (i == 1) {
+                adapter.notifyDataSetChanged();
+            } else if (i == 2) {
+                Log.e("JDBC", msg.toString());
+                Toast.makeText(BookingActivity.this,"The time slot is occupied. Try another one.",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    };
 
 
     @Override
@@ -65,6 +82,7 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
         profNameText = (TextView)findViewById(R.id.profNameText);
         msgEdit = (EditText)findViewById(R.id.msgEdit);
         endTimeText = (TextView)findViewById(R.id.endTimeText);
+        sendButt = (Button)findViewById(R.id.sendButt);
 
         dateList.add(" ");
         dateSpinner = (Spinner)findViewById(R.id.dateSpinner);
@@ -95,7 +113,7 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
             ResultSet result = dbConn.select(query);
             try {
                 if (result.wasNull()) {
-                    handler.sendEmptyMessage(0);
+                    bookingHandler.sendEmptyMessage(0);
                 } else {
                     while (result.next()) {
                         Date date = result.getTimestamp("reserved_time");
@@ -104,9 +122,9 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
                         String date1 = s[0];
                         if (dateList.contains(date1) == false) {
                             dateList.add(date1);
+                            bookingHandler.sendEmptyMessage(1);
                         }
                     }
-                    handler.sendEmptyMessage(1);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -117,6 +135,7 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
     };
 
     public void sendRequest(View view) {
+        Log.e("JDBC", "button clicked");
         t = new Thread(request);
         t.start();
     }
@@ -132,12 +151,12 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
                     + msgEdit.getText().toString() + "\' where professor_id=" + profId
                     + " and reserved_time=\'" + reservedTime + "\' and reserved_status is null and student_id is null";
             int count = dbConn.update(query);
-            switch (count) {
-                case 0:
-                    handler.sendEmptyMessage(2);
-                default:
-                    //TODO: back to profile activity
-                    Log.e("JDBC", "Booking succeeed");
+            if (count <= 0) {
+                Log.e("JDBC", "inside count");
+                bookingHandler.sendEmptyMessage(2);
+            } else {
+                //TODO: back to profile activity
+                Log.e("JDBC", "Booking succeeed");
             }
             dbConn.disConnect();
             //clean up
@@ -147,21 +166,6 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
     };
 
 
-    private Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    toast.makeText(BookingActivity.this, "No Timeslot Available for " + profNameText.getText().toString(),
-                            Toast.LENGTH_LONG).show();
-                case 1:
-                    adapter.notifyDataSetChanged();
-                case 2:
-                    toast.makeText(BookingActivity.this,"The time slot is occupied. Try another one.",
-                            Toast.LENGTH_LONG).show();
-            }
-
-        }
-    };
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
