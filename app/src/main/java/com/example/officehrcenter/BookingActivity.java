@@ -80,34 +80,11 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
 
     private Runnable background = new Runnable() {
         public void run() {
-            String URL = "jdbc:mysql://frodo.bentley.edu:3306/officehrdb";
-            String dbusername = "harry";
-            String dbpassword = "harry";
-            try { //load driver into VM memory
-                Class.forName("com.mysql.jdbc.Driver");
-            } catch (ClassNotFoundException e) {
-                Log.e("JDBC", "Did not load driver");
-
-            }
-
-            try { //create connection and statement objects
-                con = DriverManager.getConnection(
-                        URL,
-                        dbusername,
-                        dbpassword);
-                stmt = con.createStatement();
-            } catch (SQLException e) {
-                Log.e("JDBC", "problem connecting");
-            }
-
+            JDBCHelper dbConn = new JDBCHelper();
+            dbConn.connenctDB();
             String query = "select * from reservation where professor_id = " + profId + " and student_id is NULL;";
-            Log.e("JDBC", query);
-
+            ResultSet result = dbConn.select(query);
             try {
-                // execute SQL commands to create table, insert data, select contents
-                ResultSet result = stmt.executeQuery(query);
-
-                //read result set, write data to Log
                 if (result.wasNull()) {
                     handler.sendEmptyMessage(0);
                 } else {
@@ -122,21 +99,11 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
                     }
                     handler.sendEmptyMessage(1);
                 }
-
-                //clean up
-                t = null;
-
             } catch (SQLException e) {
-                Log.e("JDBC", "problems with SQL sent to " + URL +
-                        ": " + e.getMessage());
-            } finally {
-                try { //close connection, may throw checked exception
-                    if (con != null)
-                        con.close();
-                } catch (SQLException e) {
-                    Log.e("JDBC", "close connection failed");
-                }
+                e.printStackTrace();
             }
+            dbConn.disConnect();
+            t = null;
         }
     };
 
@@ -249,7 +216,6 @@ public class BookingActivity extends AppCompatActivity implements AdapterView.On
             LocalTime endTime = startTime.plusMinutes(30);
             endTimeText.setText(endTime.toString());
         }
-
 
     }
 
