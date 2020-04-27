@@ -240,7 +240,6 @@ public class BookingActivity extends AppCompatActivity implements TextToSpeech.O
                 Log.e("Speak", "Language is not available.");
             } else {
                 // The TTS engine has been successfully initialized
-                speak("Please enter your bill amount");
                 Log.i("Speaker", "TTS Initialization successful.");
             }
         } else {
