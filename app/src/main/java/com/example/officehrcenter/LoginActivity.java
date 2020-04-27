@@ -48,6 +48,8 @@ public class LoginActivity extends AppCompatActivity {
     public void login(View view) {
         t = new Thread(background);
         t.start();
+//        Intent i = new Intent(this, ProfOverviewActivity.class);
+//        startActivity(i);
     }
 
     public void signUp(View view) {
@@ -120,7 +122,8 @@ public class LoginActivity extends AppCompatActivity {
                 case 0:
                     signupText.setVisibility(View.VISIBLE);
                 case 1:
-                    Intent i = new Intent(LoginActivity.this, BookingActivity.class);
+                    //Intent i = new Intent(LoginActivity.this, BookingActivity.class);
+                    Intent i = new Intent(LoginActivity.this, ProfOverviewActivity.class);
                     startActivity(i);
             }
 
