@@ -1,71 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     tools:context=".activities.LoginActivity">
 
-    <EditText
-        android:id="@+id/userName"
+    <TableLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="UserName"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="29dp"
-        android:ems="10"
-        android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userName" />
+        <TableRow>
 
-    <Button
-        android:id="@+id/loginButt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="46dp"
-        android:onClick="login"
-        android:text="Login"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+            <EditText
+                android:id="@+id/userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:hint="@string/userName"
+                android:gravity="center"
+                android:layout_column="0"
+                android:layout_span="2"/>
+        </TableRow>
 
-    <Button
-        android:id="@+id/signupButt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="21dp"
-        android:onClick="signUp"
-        android:text="Sign up"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginButt" />
+        <TableRow
+            android:layout_marginTop="@dimen/loginPadding">
 
-    <TextView
-        android:id="@+id/signupText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:text="Incorrect username/password"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/userName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPassword"
+                android:hint="@string/password"
+                android:gravity="center"
+                android:layout_column="0"
+                android:layout_span="2"/>
+        </TableRow>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TableRow
+            android:layout_marginTop="@dimen/loginPadding">
+
+            <Button
+                android:id="@+id/loginButt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_marginRight="@dimen/loginButtonMargin"
+                android:layout_marginLeft="@dimen/loginButtonMargin"
+                android:text="Login"/>
+
+            <Button
+                android:id="@+id/signupButt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/loginButtonMargin"
+                android:layout_marginRight="@dimen/loginButtonMargin"
+                android:layout_column="1"
+                android:text="Sign up" />
+        </TableRow>
+
+
+        <TableRow
+            android:layout_marginTop="@dimen/loginPadding">
+
+            <TextView
+            android:id="@+id/incorrectMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_span="2"
+            android:text="@string/incorrectMessage"
+            android:gravity="center"
+           />
+        </TableRow>
+
+    </TableLayout>
+
+</RelativeLayout>
