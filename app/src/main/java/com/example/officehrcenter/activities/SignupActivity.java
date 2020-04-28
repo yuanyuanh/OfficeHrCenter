@@ -66,16 +66,12 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
         officeEdit = (EditText)findViewById(R.id.officeEdit);
         officeEdit.setVisibility(View.INVISIBLE);
         emailEdit = (EditText)findViewById(R.id.emailEdit);
-        emailEdit.setVisibility(View.INVISIBLE);
         phoneEdit = (EditText)findViewById(R.id.phoneEdit);
-        phoneEdit.setVisibility(View.INVISIBLE);
 
         officeText = (TextView)findViewById(R.id.officeText);
         officeText.setVisibility(View.INVISIBLE);
         phoneText = (TextView)findViewById(R.id.phoneText);
-        phoneText.setVisibility(View.INVISIBLE);
         emailText = (TextView)findViewById(R.id.emailText);
-        emailText.setVisibility(View.INVISIBLE);
 
         userTip = (TextView)findViewById(R.id.userTip1);
         userTip.setVisibility(View.INVISIBLE);
@@ -113,17 +109,9 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
         if (checkedId == R.id.rbProf) {
             officeEdit.setVisibility(View.VISIBLE);
             officeText.setVisibility(View.VISIBLE);
-            emailEdit.setVisibility(View.VISIBLE);
-            phoneEdit.setVisibility(View.VISIBLE);
-            emailText.setVisibility(View.VISIBLE);
-            phoneText.setVisibility(View.VISIBLE);
         } else {
             officeText.setVisibility(View.INVISIBLE);
             officeEdit.setVisibility(View.INVISIBLE);
-            emailEdit.setVisibility(View.INVISIBLE);
-            phoneEdit.setVisibility(View.INVISIBLE);
-            emailText.setVisibility(View.INVISIBLE);
-            phoneText.setVisibility(View.INVISIBLE);
             officeTip.setVisibility(View.INVISIBLE);
         }
     }
@@ -206,21 +194,22 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
             JDBCHelper dbConn = new JDBCHelper();
             dbConn.connenctDB();
             // construct query based on occupation
-            String updateStm = "insert into users (username, password, name, occupation";
+            String updateStm = "insert into users (username, password, name, email, phone, occupation";
             if (checkId == R.id.rbStudent) {
                 updateStm += ")";
             } else {
-                updateStm += ", office, email, phone)";
+                updateStm += ", office)";
             }
             updateStm += " values(\'" + userEdit.getText().toString() +
                     "\', \'" + passwordEdit1.getText().toString() +
                     "\', \'" + nameEdit.getText().toString() +
+                    "\', \'" + emailEdit.getText().toString() +
+                    "\', \'" + phoneEdit.getText().toString() +
                     "\', \'";
             if (occupationGroup.getCheckedRadioButtonId() == R.id.rbProf) {
                 updateStm += "professor" +
                         "\', \'" + officeEdit.getText().toString() +
-                        "\', \'" + emailEdit.getText().toString() +
-                        "\', \'" + phoneEdit.getText().toString() + "\');";
+                        "\');";
             } else {
                 updateStm += "student\');";
             }
