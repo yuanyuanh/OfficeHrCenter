@@ -129,8 +129,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:digits="@string/enabledChars"
-                android:inputType="textPersonName|textCapWords" />
+                android:inputType="textPersonName" />
         </TableRow>
 
         <TableRow

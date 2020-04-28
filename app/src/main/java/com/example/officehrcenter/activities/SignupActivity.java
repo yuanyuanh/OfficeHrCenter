@@ -69,7 +69,6 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
         phoneEdit = (EditText)findViewById(R.id.phoneEdit);
         phoneEdit.setVisibility(View.INVISIBLE);
 
-        officeTip.setVisibility(View.INVISIBLE);
         officeText = (TextView)findViewById(R.id.officeText);
         officeText.setVisibility(View.INVISIBLE);
         phoneText = (TextView)findViewById(R.id.phoneText);
@@ -134,35 +133,48 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
         if (userEdit.getText().toString().isEmpty()) {
             userTip.setVisibility(View.VISIBLE);
             requiredFilled = false;
+        }else{
+            userTip.setVisibility(View.INVISIBLE);
         }
         if (passwordEdit1.getText().toString().isEmpty()) {
             passwordTip1.setVisibility(View.VISIBLE);
             requiredFilled = false;
+        }else{
+            passwordTip1.setVisibility(View.INVISIBLE);
         }
         if (!passwordEdit1.getText().toString().equals(passwordEdit2.getText().toString())) {
             passwordTip2.setVisibility(View.VISIBLE);
             requiredFilled = false;
+        }else{
+            passwordTip2.setVisibility(View.INVISIBLE);
         }
         if (nameEdit.getText().toString().isEmpty()) {
             nameTip.setVisibility(View.VISIBLE);
             requiredFilled = false;
+        }else{
+            nameTip.setVisibility(View.INVISIBLE);
         }
         if (occupationGroup.getCheckedRadioButtonId() == -1) {
             occupationTip.setVisibility(View.VISIBLE);
             requiredFilled = false;
         } else {
+            occupationTip.setVisibility(View.INVISIBLE);
             if (checkId == R.id.rbProf) {
                 if (officeEdit.getText().toString().isEmpty()) {
                     officeTip.setVisibility(View.VISIBLE);
                     requiredFilled = false;
+                }else{
+                    officeTip.setVisibility(View.INVISIBLE);
                 }
             }
         }
 
-        if (!requiredFilled) {
-            Log.i(TAG, "All required filled, start to update the database");
+        if (requiredFilled) {
+            Log.i(TAG, "All requires filled, start to update the database");
             t = new Thread(background);
             t.start();
+        }else{
+            Log.i(TAG, "Requires not filled");
         }
 
     }
@@ -172,6 +184,12 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
             switch (msg.what) {
                 case 0:
                     Log.i(TAG, "Sign up successfully");
+                    // A toast indicating successful result
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(SignupActivity.this,"You've created a new account!",Toast.LENGTH_LONG).show();
+                        }
+                    });
                     finish();
                     break;
                 case 1:
