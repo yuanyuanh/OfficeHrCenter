@@ -107,7 +107,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
 
             ResultSet result = dbConn.select(query);
             try {
-                if (!result.next()) {
+                if (result.wasNull()) {
                     Log.i(TAG, "No records found");
                     handler.sendEmptyMessage(0);
                 } else {
