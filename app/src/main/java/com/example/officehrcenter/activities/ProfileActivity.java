@@ -135,6 +135,8 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            t = null; // end of the current thread
+            dbConn.disConnect();
         }
     };
 

@@ -79,18 +79,20 @@ public class ProfOverviewActivity extends AppCompatActivity implements OnClickLi
                 } else {
                     while (result.next()) {
                         int id = result.getInt("id");
-                        String name = result.getString("username");
+                        String name = result.getString("name");
                         String office = result.getString("office");
                         currentData = new ProfOverviewDataModel(id, name, office);
                         profOverview.add(currentData);
+                        resultList.add(currentData);
                     }
-                    resultList = profOverview;
                     Log.i(TAG, "Query results added to array lists");
                     handler.sendEmptyMessage(1);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            t = null; // end of the current thread
+            dbConn.disConnect();
         }
     };
 
@@ -115,17 +117,24 @@ public class ProfOverviewActivity extends AppCompatActivity implements OnClickLi
     @Override
     public void onClick(View v) {
         String searchText = keyWord.getText().toString().trim();
+        Log.i(TAG, "Searching for " + searchText);
         if (searchText.equals("")){
-            resultList = profOverview;
+            resultList.clear();
+            for(ProfOverviewDataModel prof : profOverview){
+                resultList.add(prof);
+            }
+            Log.i(TAG, "Return the original list ");
         }else{
-            resultList = new ArrayList<ProfOverviewDataModel>();
+            resultList.clear();
             for(ProfOverviewDataModel prof : profOverview) {
                 if (prof.getName().toLowerCase().contains(searchText.toLowerCase())) {
                     resultList.add(prof);
+                    Log.i(TAG, "Professor " + prof.getName() + " is found.");
                 }
             }
-            profOverviewAdapter.notifyDataSetChanged();
+            Log.i(TAG, "Search finished");
         }
+        profOverviewAdapter.notifyDataSetChanged();
     }
 
     @Override
