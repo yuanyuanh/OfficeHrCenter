@@ -246,6 +246,18 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                     Toast.makeText(this,"Please select an appointment to call the person to meet", Toast.LENGTH_LONG).show();
                 }
                 return true;
+            case R.id.sms:
+                if(phone.equals("Not available")){
+                    Toast.makeText(this, "Sorry, we don't have the requested phone number", Toast.LENGTH_LONG).show();
+                }else if(!phone.equals("")){
+                    Intent sms = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + phone));
+                    if (sms.resolveActivity(getPackageManager()) != null) {
+                        startActivity(sms);
+                    }
+                }else{
+                    Toast.makeText(this,"Please select an appointment to call the person to meet", Toast.LENGTH_LONG).show();
+                }
+                return true;
 
         }
         return true;

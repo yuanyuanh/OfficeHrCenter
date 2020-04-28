@@ -20,5 +20,8 @@
         android:id="@+id/dial"
         android:title="Dial"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/sms"
+        android:title="SMS" />
 
 </menu>
