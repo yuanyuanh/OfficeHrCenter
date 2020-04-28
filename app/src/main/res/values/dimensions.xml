@@ -4,4 +4,5 @@
     <dimen name="loginButtonMargin">10dp</dimen>
     <dimen name="signUpButtonTopMargin">20dp</dimen>
     <dimen name="profileListText">15sp</dimen>
+    <dimen name="availabilityListText">18sp</dimen>
 </resources>

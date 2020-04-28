@@ -8,14 +8,12 @@
         android:id="@+id/activity_main_view_custom_calendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
     </com.example.officehrcenter.views.CustomCalendarView>
 
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+    <ListView
+        android:id="@+id/availList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 
 </LinearLayout>
