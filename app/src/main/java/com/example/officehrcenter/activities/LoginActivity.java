@@ -1,6 +1,6 @@
 package com.example.officehrcenter.activities;
 
-/** This is the login activity where user type in their name and password to get access to the reservation service.
+/** This is the login activity where users type in their name and password to get access to the reservation service.
  * @version 1.0
  */
 
