@@ -4,6 +4,8 @@
     <!--LogIn Activity-->
     <string name="userName">User name</string>
     <string name="password">Password</string>
+    <string name="login">LOGIN</string>
+    <string name="signup">SIGN UP</string>
     <string name="incorrectMessage">Incorrect username/password</string>
 
     <string name="professor_name">Professor Name</string>

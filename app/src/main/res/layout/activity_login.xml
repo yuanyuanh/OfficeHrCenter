@@ -50,7 +50,7 @@
                 android:layout_column="0"
                 android:layout_marginRight="@dimen/loginButtonMargin"
                 android:layout_marginLeft="@dimen/loginButtonMargin"
-                android:text="Login"/>
+                android:text="@string/login"/>
 
             <Button
                 android:id="@+id/signupButt"
@@ -59,7 +59,7 @@
                 android:layout_marginLeft="@dimen/loginButtonMargin"
                 android:layout_marginRight="@dimen/loginButtonMargin"
                 android:layout_column="1"
-                android:text="Sign up" />
+                android:text="@string/signup" />
         </TableRow>
 
 
