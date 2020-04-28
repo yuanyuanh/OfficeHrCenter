@@ -16,51 +16,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <!--First Tab, upcoming reservations-->
             <LinearLayout android:id="@+id/tab1"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <TextView
-                android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="30dp"
-                android:text="Upcoming Reservation"
-                android:textSize="24sp" />
-
 
                 <ListView
                     android:id="@+id/upcominglist"
                     android:layout_width="match_parent"
-                    android:layout_height="432dp"
-                    android:drawSelectorOnTop="true" />
-
-
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 
+            <!--Second Tab, history reservations-->
             <LinearLayout android:id="@+id/tab2"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <TextView
-                    android:id="@+id/textView5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="30dp"
-                    android:text="History Reservation"
-                    android:textSize="24sp" />
 
                 <ListView
                     android:id="@+id/historylist"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:drawSelectorOnTop="true"/>
+                    android:layout_height="wrap_content" />
             </LinearLayout>
-
-
 
         </FrameLayout>
 

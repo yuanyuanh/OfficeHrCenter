@@ -12,11 +12,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import android.view.View;
 import android.widget.Button;

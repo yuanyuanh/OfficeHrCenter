@@ -1,6 +1,11 @@
 package com.example.officehrcenter.activities;
 
-import android.app.Activity;
+/** This activity shows the users their upcoming and history reservations.
+ *  Students can send email to professor to remind them of the meeting.
+ *  The actionbar at the top right corner enables students to make new reservations and professor to update the schedules.
+ * @version 1.0
+ */
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,36 +36,35 @@ import java.util.Date;
 import com.example.officehrcenter.R;
 import com.example.officehrcenter.application.App;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements OnItemClickListener{
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
-    }
+    private App myApp; // current application
 
-    private App myApp;
     private TabHost tabHost;
-    private ListView upcominglistview;
-    private ListView historylistview;
-    private String emailaddress;
-    private String emaildate;
-    private int studentid;
-    private Statement stmt = null;
-    private Connection con = null;
-    private ArrayList<String> upcomingList =new ArrayList<String>();
-    private ArrayList<String> historyList =new ArrayList<String>();
-    private ArrayAdapter upcomingadapter;
-    private ArrayAdapter historyadapter;
+    private ListView upcomingListView;
+    private ListView historyListView;
+    private ArrayList<DataModel> upcomingList = new ArrayList<DataModel>();
+    private ArrayList<DataModel> historyList = new ArrayList<DataModel>();
 
+    private String emailAddress = "";
+    private String emailDate = "";
+    private String phone = "";
+
+    private ArrayAdapter<DataModel> upcomingAdapter;
+    private ArrayAdapter<DataModel> historyAdapter;
+
+    private final String TAG = "Profile"; // for the use of log
     private Thread t = null;
-
+    private JDBCHelper dbConn = new JDBCHelper(); // JDBC helper for connecting and making queries to DB
+    private Date now= new Date();
+    private DataModel currentData;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
         myApp = (App)getApplication();
+
         tabHost=(TabHost)findViewById(R.id.profile);
         tabHost.setup();
 
@@ -70,122 +75,66 @@ public class ProfileActivity extends AppCompatActivity {
         spec.setContent(R.id.tab1);                 //add tab view content
         spec.setIndicator("Upcoming");              //put text on tab
         tabHost.addTab(spec);                       //put tab in TabHost container
+        upcomingListView = (ListView)findViewById(R.id.upcominglist);
+        upcomingAdapter = new CustomAdapter(upcomingList,getApplicationContext());
+        upcomingListView.setAdapter(upcomingAdapter);
+        upcomingListView.setOnItemClickListener(this);
 
         // --------------------------------Tab 2-----------------------------------
         spec = tabHost.newTabSpec("history");	//create new tab specification
         spec.setContent(R.id.tab2);                 //add tab view content
         spec.setIndicator("History");              //put text on tab
         tabHost.addTab(spec);                       //put tab in TabHost container
-
-        upcominglistview = (ListView)findViewById(R.id.upcominglist);
-        historylistview = (ListView)findViewById(R.id.historylist);
-
-        //store email and date when click
-        upcominglistview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                String s =upcomingList.get(position);
-                String tokens[]=s.split(" ");
-                emailaddress= tokens[tokens.length-1];
-                emaildate=tokens[1]+" "+tokens[2];
-            }
-        });
-
-
-
-        upcomingadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, upcomingList);
-        upcomingadapter.setDropDownViewResource(
-                android.R.layout.simple_spinner_dropdown_item);
-        upcominglistview.setAdapter(upcomingadapter);
-
-
-        historyadapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, historyList);
-        historyadapter.setDropDownViewResource(
-                android.R.layout.simple_spinner_dropdown_item);
-        historylistview.setAdapter(historyadapter);
+        historyListView = (ListView)findViewById(R.id.historylist);
+        historyAdapter = new CustomAdapter(historyList,getApplicationContext());
+        historyListView.setAdapter(historyAdapter);
+        historyListView.setOnItemClickListener(this);
 
         t = new Thread(background);
         t.start();
-
-
 
     }
 
     private Runnable background = new Runnable() {
         public void run() {
-            Intent intent=getIntent();
-            studentid=myApp.getID();
-            System.out.println(studentid);
 
-            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-            System.out.println("studentid"+ studentid);
-            String URL = "jdbc:mysql://frodo.bentley.edu:3306/officehrdb";
-            String dbusername = "harry";
-            String dbpassword = "harry";
-            try { //load driver into VM memory
-                Class.forName("com.mysql.jdbc.Driver");
-            } catch (ClassNotFoundException e) {
-                Log.e("JDBC", "Did not load driver");
+            dbConn.connenctDB();
+            String query = "select users.id, username, email, phone, reserved_time, msg from reservation join users ";
 
+            if (myApp.isProf()) {
+                query += "on reservation.student_id = users.id where professor_id = " + myApp.getID() + ";";
+            } else {
+                query += "on reservation.professor_id = users.id where student_id = " + myApp.getID() + ";";
             }
 
-            try { //create connection and statement objects
-                con = DriverManager.getConnection(
-                        URL,
-                        dbusername,
-                        dbpassword);
-                stmt = con.createStatement();
-            } catch (SQLException e) {
-                Log.e("JDBC", "problem connecting");
-            }
-
-            String query = "select * from reservation join users on reservation.professor_id=users.id where student_id ="+String.valueOf(studentid)+" ;";
-            Log.e("JDBC", query);
-
+            ResultSet result = dbConn.select(query);
             try {
-                // execute SQL commands to create table, insert data, select contents
-                ResultSet result = stmt.executeQuery(query);
-
-                //read result set, write data to Log
-                if (result.wasNull()) {
+                if (!result.next()) {
+                    Log.i(TAG, "No records found");
                     handler.sendEmptyMessage(0);
                 } else {
                     while (result.next()) {
-                        String name = result.getString("name");
-                        String email=result.getString("email");
-                        Date date = result.getTimestamp("reserved_time");
-                        Date now= new Date();
-                        String strDate = dateFormat.format(date);
-                        System.out.println(name + "  "+ strDate);
-                        if(now.compareTo(date)>=0){
+                        int id = result.getInt("id");
+                        String name = result.getString("username");
+                        String email = result.getString("email");
+                        String phone = result.getString("phone");
+                        Date dateTime = result.getTimestamp("reserved_time");
+                        String msg = result.getString("msg");
+                        currentData = new DataModel(id, name, email, phone, dateTime, msg);
+
+                        if (now.compareTo(dateTime) >= 0) {
                             //history
-                            historyList.add("Time: "+strDate+" Professor: "+name+" Email: "+ email);
-
-                        }else{
+                            historyList.add(currentData);
+                        } else {
                             //upcoming
-                            upcomingList.add("Time: "+strDate+" Professor: "+name+" Email: "+ email);
+                            upcomingList.add(currentData);
                         }
-                        System.out.println(historyList.size());
-                        System.out.println(upcomingList.size());
-
                     }
-
+                    Log.i(TAG, "Query results added to array lists");
                     handler.sendEmptyMessage(1);
-
                 }
-
             } catch (SQLException e) {
-                Log.e("JDBC", "problems with SQL sent to " + URL +
-                        ": " + e.getMessage());
-            } finally {
-                try { //close connection, may throw checked exception
-                    if (con != null)
-                        con.close();
-                } catch (SQLException e) {
-                    Log.e("JDBC", "close connection failed");
-                }
+                e.printStackTrace();
             }
         }
     };
@@ -194,45 +143,107 @@ public class ProfileActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-
-                    System.out.println("no reservation history");
+                    Log.i(TAG, "no reservation history");
+                    // A toast indicating no reservation
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(ProfileActivity.this,"You don't have any reservations",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    break;
                 case 1:
-                    upcomingadapter.notifyDataSetChanged();
-                    historyadapter.notifyDataSetChanged();
-                    System.out.println("has reservation history");
-
+                    upcomingAdapter.notifyDataSetChanged();
+                    historyAdapter.notifyDataSetChanged();
+                    Log.i(TAG, "Reservation history updated successfully");
+                    break;
+                }
             }
+        };
 
+    // listener methods for callbacks
+    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+        if(parent.getId() == R.id.upcominglist) {
+            currentData = upcomingList.get(position);
+            emailDate = currentData.getTime();
+            emailAddress = currentData.getEmail();
+            phone = currentData.getPhone();
+            Log.i(TAG, "stored info: " + emailAddress + ", " + emailDate + ", " + phone);
+        }else{
+            currentData = historyList.get(position);
+            emailDate = currentData.getTime();
+            emailAddress = currentData.getEmail();
+            phone = currentData.getPhone();
+            Log.i(TAG, "stored info: " + emailAddress + ", " + emailDate + ", " + phone);
         }
-    };
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
+        MenuItem booking = menu.findItem(R.id.booking);
+        MenuItem profAvail = menu.findItem(R.id.profAvail);
+        if(myApp.isProf()){
+            booking.setVisible(false);
+            profAvail.setVisible(true);
+        }else{
+            booking.setVisible(true);
+            profAvail.setVisible(false);
+        }
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
 
-            //go to booking activity
+            // go to booking activity
             case R.id.booking:
-                Intent i= new Intent(ProfileActivity.this, ProfOverviewActivity.class);
-                i.putExtra("studentid",studentid);
-                startActivity(i);
+                Intent booking = new Intent(ProfileActivity.this, ProfOverviewActivity.class);
+                startActivity(booking);
                 return true;
 
-            //send email
-            case R.id.email:
-                if(!emailaddress.isEmpty()){
-                    Intent msg = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
-                    msg.putExtra(Intent.EXTRA_EMAIL, emailaddress);
-                    msg.putExtra(Intent.EXTRA_TEXT, "Reminder: You have an appointment on"+emaildate);
-                    msg.putExtra(Intent.EXTRA_SUBJECT, "Appointment Reminder");
-                    if (msg.resolveActivity(getPackageManager()) != null) {
-                        startActivity(msg);
-                    }
-                    return true;
-                }
+            // go to profAvail activity
+            case R.id.profAvail:
+                Intent avail = new Intent(ProfileActivity.this, AvailabilityActivity.class);
+                startActivity(avail);
+                return true;
 
+            // send email
+            case R.id.email:
+                if (emailAddress.equals("Not available")) {
+                    Toast.makeText(this, "Sorry, we don't have the requested email address", Toast.LENGTH_LONG).show();
+                }else if(!emailAddress.equals("")){
+                    String mailTo = "mailto:" + emailAddress + "?subject=" + Uri.encode("Appointment Reminder") +
+                            "&body=" + Uri.encode("Reminder: You have an appointment at " + emailDate);
+                    Intent mail = new Intent(Intent.ACTION_SENDTO);
+                    mail.setData(Uri.parse(mailTo));
+                    if (mail.resolveActivity(getPackageManager()) != null) {
+                        startActivity(mail);
+                    }
+                }else{
+                    Toast.makeText(this,"Please select an appointment to send a email to the person to meet", Toast.LENGTH_LONG).show();
+                }
+                return true;
+
+            // dial
+            case R.id.dial:
+                if(phone.equals("Not available")){
+                    Toast.makeText(this, "Sorry, we don't have the requested phone number", Toast.LENGTH_LONG).show();
+                }else if(!phone.equals("")){
+                    Intent dial = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone));
+                    if (dial.resolveActivity(getPackageManager()) != null) {
+                        startActivity(dial);
+                    }
+                }else{
+                    Toast.makeText(this,"Please select an appointment to call the person to meet", Toast.LENGTH_LONG).show();
+                }
+                return true;
 
         }
-
         return true;
     }
 
