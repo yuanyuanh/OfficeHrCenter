@@ -25,7 +25,9 @@
                 <ListView
                     android:id="@+id/upcominglist"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:drawSelectorOnTop="true"
+                    android:background="@drawable/list_selector"/>
 
             </LinearLayout>
 
@@ -38,7 +40,9 @@
                 <ListView
                     android:id="@+id/historylist"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:defaultFocusHighlightEnabled="true"
+                    android:drawSelectorOnTop="true" />
             </LinearLayout>
 
         </FrameLayout>

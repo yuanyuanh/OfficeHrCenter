@@ -176,6 +176,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
             phone = currentData.getPhone();
             Log.i(TAG, "stored info: " + emailAddress + ", " + emailDate + ", " + phone);
         }
+        v.setSelected(true);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

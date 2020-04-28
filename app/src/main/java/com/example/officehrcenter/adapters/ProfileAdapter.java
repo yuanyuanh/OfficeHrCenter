@@ -1,6 +1,7 @@
 package com.example.officehrcenter.adapters;
 
 import android.content.Context;
+import android.R.color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,7 @@ public class ProfileAdapter extends ArrayAdapter<ProfileDataModel> {
         }else{
             viewHolder.msgText.setText("Message: " + profileDataModel.getMsg());
         }
-        // Return the completed view to render on screen
+        // Return the completed view to render on screencon
         return convertView;
     }
 }
