@@ -56,75 +56,12 @@ public class LoginActivity extends AppCompatActivity {
     public void login(View view) {
         t = new Thread(background);
         t.start();
-        // Intent i = new Intent(this, ProfileActivity.class);
-        // startActivity(i);
     }
 
     public void signUp(View view) {
         Intent i = new Intent(this, SignupActivity.class);
         startActivityForResult(i, requestCode_235);
     }
-
-    private Runnable background = new Runnable() {
-        public void run() {
-            String URL = "jdbc:mysql://frodo.bentley.edu:3306/officehrdb";
-            String dbusername = "harry";
-            String dbpassword = "harry";
-            String username = usernameText.getText().toString();
-            String password = passwordText.getText().toString();
-
-            try { //load driver into VM memory
-                Class.forName("com.mysql.jdbc.Driver");
-            } catch (ClassNotFoundException e) {
-                Log.e("JDBC", "Did not load driver");
-
-            }
-
-            try { //create connection and statement objects
-                con = DriverManager.getConnection(
-                        URL,
-                        dbusername,
-                        dbpassword);
-                stmt = con.createStatement();
-            } catch (SQLException e) {
-                Log.e("JDBC", "problem connecting");
-            }
-
-            String query = "select * from users where username=\'" + username + "\' and password=\'" + password + "\';";
-            Log.e("JDBC", query);
-            try {
-                // execute SQL commands to create table, insert data, select contents
-                ResultSet result = stmt.executeQuery(query);
-
-                //read result set, write data to Log
-
-                if (result.next() == false) {
-                    Log.e("JDBC", "No users found");
-                    handler.sendEmptyMessage(0);
-                } else {
-                    userId = result.getInt("id");
-                    myApp.setID(userId);
-                    Log.e("JDBC", "success connection");
-                    handler.sendEmptyMessage(1);
-                }
-
-                //clean up
-                t = null;
-
-            } catch (SQLException e) {
-                Log.e("JDBC", "problems with SQL sent to " + URL +
-                        ": " + e.getMessage());
-            } finally {
-                try { //close connection, may throw checked exception
-                    if (con != null)
-                        con.close();
-                } catch (SQLException e) {
-                    Log.e("JDBC", "close connection failed");
-                }
-            }
-
-        }
-    };
 
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
@@ -142,17 +79,40 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
+    private Runnable background = new Runnable() {
+        public void run() {
+
+            String username = usernameText.getText().toString();
+            String password = passwordText.getText().toString();
+
+            JDBCHelper dbConn = new JDBCHelper();
+            dbConn.connenctDB();
+
+            String query = "select * from users where username=\'" + username + "\' and password=\'" + password + "\';";
+            ResultSet result = dbConn.select(query);
+            try {
+                if (!result.next()) {
+                    Log.e("JDBC", "No users found");
+                    handler.sendEmptyMessage(0);
+                } else {
+                    userId = result.getInt("id");
+                    myApp.setID(userId);
+                    Log.e("JDBC", "success connection");
+                    handler.sendEmptyMessage(1);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            t = null;
+            dbConn.disConnect();
+        }
+    };
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         t = null;
-        try { //close connection, may throw checked exception
-            if (con != null)
-                con.close();
-        } catch (SQLException e) {
-            Log.e("JDBC", "close connection failed");
-        }
     }
-
 
 }
