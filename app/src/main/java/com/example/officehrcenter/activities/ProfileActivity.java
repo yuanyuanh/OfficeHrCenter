@@ -57,6 +57,8 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
     private Date now= new Date();
     private ProfileDataModel currentData;
 
+    private int selected;
+
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -92,6 +94,43 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
         t.start();
 
     }
+
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    Log.i(TAG, "no reservation history");
+                    // A toast indicating no reservation
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(ProfileActivity.this,"You don't have any reservations",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    break;
+                case 1:
+                    upcomingAdapter.notifyDataSetChanged();
+                    historyAdapter.notifyDataSetChanged();
+                    Log.i(TAG, "Reservation history updated successfully");
+                    break;
+                case 2:
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(ProfileActivity.this,"You have canceled the reservation successfully",Toast.LENGTH_LONG).show();
+                            upcomingList.remove(selected);
+                            upcomingAdapter.notifyDataSetChanged();
+                        }
+                    });
+                    break;
+                case 3:
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(ProfileActivity.this,"Failed to cancel reservation. Please try again",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    break;
+            }
+        }
+    };
 
     private Runnable background = new Runnable() {
         public void run() {
@@ -140,26 +179,24 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
         }
     };
 
-    private Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    Log.i(TAG, "no reservation history");
-                    // A toast indicating no reservation
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toast.makeText(ProfileActivity.this,"You don't have any reservations",Toast.LENGTH_LONG).show();
-                        }
-                    });
-                    break;
-                case 1:
-                    upcomingAdapter.notifyDataSetChanged();
-                    historyAdapter.notifyDataSetChanged();
-                    Log.i(TAG, "Reservation history updated successfully");
-                    break;
-                }
+    private Runnable cancel = new Runnable() {
+        @Override
+        public void run() {
+            String query = "DELETE FROM reservation WHERE professor_id = " + currentData.getID()
+                    + " and student_id = " + myApp.getID()
+                    + " and reserved_time = \'" + currentData.getTime() + "\';";
+            dbConn.connenctDB();
+            int count = dbConn.update(query);
+            if (count > 0) {
+                handler.sendEmptyMessage(2);
+            } else {
+                Log.e(TAG, "Failed to cancel reservation. Please try again");
+                handler.sendEmptyMessage(3);
             }
-        };
+
+        }
+    };
+
 
     // listener methods for callbacks
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -177,6 +214,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
             Log.i(TAG, "stored info: " + emailAddress + ", " + emailDate + ", " + phone);
         }
         v.setSelected(true);
+        selected = position;
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -216,6 +254,12 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                 bundle.putString("profName", "Myself");
                 avail.putExtras(bundle);
                 startActivity(avail);
+                return true;
+
+            // cancel the appointment
+            case R.id.cancel:
+                t = new Thread(cancel);
+                t.start();
                 return true;
 
             // send email
