@@ -141,10 +141,10 @@ public class ProfOverviewActivity extends AppCompatActivity implements OnClickLi
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         currentData = resultList.get(position);
-        int profId = currentData.getId();
         Intent intent= new Intent(ProfOverviewActivity.this, AvailabilityActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putInt("profId", profId);
+        bundle.putInt("profId", currentData.getId());
+        bundle.putString("profName", currentData.getName());
         intent.putExtras(bundle);
         startActivity(intent);
     }

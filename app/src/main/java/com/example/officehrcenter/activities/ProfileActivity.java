@@ -97,7 +97,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
         public void run() {
 
             dbConn.connenctDB();
-            String query = "select users.id, username, email, phone, office, reserved_time, msg from reservation join users ";
+            String query = "select users.id, name, email, phone, office, reserved_time, msg from reservation join users ";
 
             if (myApp.isProf()) {
                 query += "on reservation.student_id = users.id where professor_id = " + myApp.getID() + ";";
@@ -113,7 +113,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                 } else {
                     while (result.next()) {
                         int id = result.getInt("id");
-                        String name = result.getString("username");
+                        String name = result.getString("name");
                         String email = result.getString("email");
                         String phone = result.getString("phone");
                         String office = result.getString("office");
@@ -213,6 +213,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                 Intent avail = new Intent(ProfileActivity.this, AvailabilityActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putInt("profId", myApp.getID());
+                bundle.putString("profName", "Myself");
                 avail.putExtras(bundle);
                 startActivity(avail);
                 return true;

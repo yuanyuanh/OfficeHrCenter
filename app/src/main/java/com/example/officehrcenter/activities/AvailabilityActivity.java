@@ -43,6 +43,7 @@ public class AvailabilityActivity extends AppCompatActivity implements OnDateSel
     private ArrayList<AvailabilityDataModel> hourAvail = new ArrayList();
 
     private int profId;
+    private String profName;
     private final String TAG = "Availability"; // for the use of log
     private Date selectedDate;
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
@@ -64,6 +65,7 @@ public class AvailabilityActivity extends AppCompatActivity implements OnDateSel
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         profId = bundle.getInt("profId");
+        profName = bundle.getString("profName");
 
         mCustomCalendar = (CustomCalendarView) findViewById(R.id.activity_main_view_custom_calendar);
         mCustomCalendar.setOnDateSelectedListener(this);
@@ -155,6 +157,7 @@ public class AvailabilityActivity extends AppCompatActivity implements OnDateSel
             Intent intent= new Intent(AvailabilityActivity.this, BookingActivity.class);
             Bundle bundle = new Bundle();
             bundle.putInt("profId", profId);
+            bundle.putString("profName", profName);
             bundle.putString("date", DATE_FORMAT.format(selectedDate));
             bundle.putString("startTime", currentHour.getStartTime());
             bundle.putString("endTime", currentHour.getEndTime());
