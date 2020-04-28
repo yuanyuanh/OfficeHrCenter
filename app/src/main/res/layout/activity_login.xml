@@ -59,7 +59,7 @@
                 android:layout_marginLeft="@dimen/loginButtonMargin"
                 android:layout_marginRight="@dimen/loginButtonMargin"
                 android:layout_column="1"
-                android:text="@string/signup" />
+                android:text="@string/signUp" />
         </TableRow>
 
 
