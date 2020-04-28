@@ -210,6 +210,9 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
             // go to profAvail activity
             case R.id.profAvail:
                 Intent avail = new Intent(ProfileActivity.this, AvailabilityActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("profId", myApp.getID());
+                avail.putExtras(bundle);
                 startActivity(avail);
                 return true;
 
