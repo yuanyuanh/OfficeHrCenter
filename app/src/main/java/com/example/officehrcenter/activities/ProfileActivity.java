@@ -29,7 +29,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import com.example.officehrcenter.R;
-import com.example.officehrcenter.adapters.ProfileCustomAdapter;
+import com.example.officehrcenter.adapters.ProfileAdapter;
 import com.example.officehrcenter.application.App;
 import com.example.officehrcenter.objects.JDBCHelper;
 import com.example.officehrcenter.objects.ProfileDataModel;
@@ -74,7 +74,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
         spec.setIndicator("Upcoming");              //put text on tab
         tabHost.addTab(spec);                       //put tab in TabHost container
         upcomingListView = (ListView)findViewById(R.id.upcominglist);
-        upcomingAdapter = new ProfileCustomAdapter(upcomingList,getApplicationContext());
+        upcomingAdapter = new ProfileAdapter(upcomingList,getApplicationContext());
         upcomingListView.setAdapter(upcomingAdapter);
         upcomingListView.setOnItemClickListener(this);
 
@@ -84,7 +84,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
         spec.setIndicator("History");              //put text on tab
         tabHost.addTab(spec);                       //put tab in TabHost container
         historyListView = (ListView)findViewById(R.id.historylist);
-        historyAdapter = new ProfileCustomAdapter(historyList,getApplicationContext());
+        historyAdapter = new ProfileAdapter(historyList,getApplicationContext());
         historyListView.setAdapter(historyAdapter);
         historyListView.setOnItemClickListener(this);
 

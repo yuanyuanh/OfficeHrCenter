@@ -12,7 +12,7 @@ import com.example.officehrcenter.objects.ProfileDataModel;
 
 import java.util.ArrayList;
 
-public class ProfileCustomAdapter extends ArrayAdapter<ProfileDataModel> {
+public class ProfileAdapter extends ArrayAdapter<ProfileDataModel> {
 
     private ArrayList<ProfileDataModel> dataSet;
     Context mContext;
@@ -24,7 +24,7 @@ public class ProfileCustomAdapter extends ArrayAdapter<ProfileDataModel> {
         TextView msgText;
     }
 
-    public ProfileCustomAdapter(ArrayList<ProfileDataModel> data, Context context) {
+    public ProfileAdapter(ArrayList<ProfileDataModel> data, Context context) {
         super(context, R.layout.profile_item, data);
         this.dataSet = data;
         this.mContext=context;
