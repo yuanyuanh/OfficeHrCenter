@@ -53,7 +53,7 @@ public class ProfOverviewAdapter extends ArrayAdapter<ProfOverviewDataModel> {
             result = convertView;
         }
 
-        viewHolder.nameText.setText("Name: " + profOverviewDataModel.getName());
+        viewHolder.nameText.setText(profOverviewDataModel.getName());
         viewHolder.officeText.setText("Office: " + profOverviewDataModel.getOffice());
         // Return the completed view to render on screen
         return convertView;
