@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.example.officehrcenter.R;
 import com.example.officehrcenter.objects.ProfOverviewDataModel;
-import com.example.officehrcenter.objects.ProfileDataModel;
 
 import java.util.ArrayList;
 
@@ -54,8 +53,8 @@ public class ProfOverviewAdapter extends ArrayAdapter<ProfOverviewDataModel> {
             result = convertView;
         }
 
-        viewHolder.nameText.setText("Name: " + ProfOverviewDataModel.getName());
-        viewHolder.officeText.setText("Office: " + ProfOverviewDataModel.getOffice());
+        viewHolder.nameText.setText("Name: " + profOverviewDataModel.getName());
+        viewHolder.officeText.setText("Office: " + profOverviewDataModel.getOffice());
         // Return the completed view to render on screen
         return convertView;
     }
