@@ -54,6 +54,7 @@ public class AvailabilityActivity extends AppCompatActivity implements OnDateSel
     private AvailabilityDataModel currentHour;
 
     private String[] hourTable = new String[(ENDHOUR-STARTHOUR)*2];
+    private Date now= new Date();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,26 +112,36 @@ public class AvailabilityActivity extends AppCompatActivity implements OnDateSel
         public void run() {
 
             dbConn.connenctDB();
+            if (now.compareTo(selectedDate) >= 0) {
+                //history
+                setAllUnavailable();
+                Log.i(TAG, "Past days not open for reservations");
+                handler.sendEmptyMessage(2);
+            } else {
+                //upcoming
+                setAllAvailable();
 
-            String query = "select cast(reserved_time as time) as reserved_daytime from reservation " +
-                    "where date(reserved_time) = \'" + DATE_FORMAT.format(selectedDate) + "\'" +
-                    "and professor_id = " + profId + ";";
+                String query = "select cast(reserved_time as time) as reserved_daytime from reservation " +
+                        "where date(reserved_time) = \'" + DATE_FORMAT.format(selectedDate) + "\'" +
+                        "and professor_id = " + profId + ";";
 
-            ResultSet result = dbConn.select(query);
+                ResultSet result = dbConn.select(query);
 
-            try {
-                if (result.wasNull()) {
-                    Log.i(TAG, "Available all day");
-                    handler.sendEmptyMessage(0);
-                } else {
-                    while (result.next()) {
-                        setAvailablity(result.getString("reserved_daytime"));
+                try {
+                    if (result.wasNull()) {
+                        Log.i(TAG, "Available all day");
+                        handler.sendEmptyMessage(0);
+                    } else {
+                        while (result.next()) {
+                            setAvailability(result.getString("reserved_daytime"));
+                        }
+                        handler.sendEmptyMessage(1);
                     }
-                    handler.sendEmptyMessage(1);
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
+
             t = null; // end of the current thread
             dbConn.disConnect();
         }
@@ -142,6 +153,9 @@ public class AvailabilityActivity extends AppCompatActivity implements OnDateSel
                 case 0:
                     break;
                 case 1:
+                    availabilityAdapter.notifyDataSetChanged();
+                    break;
+                case 2:
                     availabilityAdapter.notifyDataSetChanged();
                     break;
             }
@@ -166,7 +180,7 @@ public class AvailabilityActivity extends AppCompatActivity implements OnDateSel
         }
     }
 
-    public void setAvailablity(String timeString){
+    public void setAvailability(String timeString){
         Log.i(TAG, "current hour:" + timeString);
         for(AvailabilityDataModel hour: hourAvail){
             if(hour.getStartTime().equals(timeString.substring(0,5))){
@@ -176,4 +190,15 @@ public class AvailabilityActivity extends AppCompatActivity implements OnDateSel
         }
     }
 
+    public void setAllAvailable(){
+        for(AvailabilityDataModel hour: hourAvail){
+            hour.setAvailable();
+        }
+    }
+
+    public void setAllUnavailable(){
+        for(AvailabilityDataModel hour: hourAvail){
+            hour.setUnavailable();
+        }
+    }
 }

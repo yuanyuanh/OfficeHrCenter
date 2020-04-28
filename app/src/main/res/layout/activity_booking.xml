@@ -1,96 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".activities.BookingActivity">
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/bookingTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="Book An Appointment"
+        android:layout_marginTop="50dp"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="center"
+        android:text="Title"/>
 
     <TextView
         android:id="@+id/profNameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="30dp"
-        android:text="@string/professor_name"
+        android:layout_marginTop="20dp"
         android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        android:layout_gravity="center"
+        android:text="Professor name"/>
 
     <TableLayout
-        android:id="@+id/tableLayout2"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profNameText">
+        android:layout_gravity="center">
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:minHeight="40dp">
+            android:layout_marginTop="20dp">
 
             <TextView
-                android:id="@+id/textView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Date"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
-            <Spinner
-                android:id="@+id/dateSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:minHeight="40dp">
-
             <TextView
-                android:id="@+id/textView9"
+                android:id="@+id/dateText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Start Time"
                 android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:visibility="visible" />
-
-            <Spinner
-                android:id="@+id/startTimeSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="visible" />
+                android:textSize="18sp" />
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:minHeight="40dp">
+            android:layout_marginTop="20dp">
 
             <TextView
-                android:id="@+id/textView10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="End Time"
+                android:text="Start At"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/startTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="End At"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
@@ -98,44 +86,59 @@
                 android:id="@+id/endTimeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAlignment="viewStart"
+                android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="18dp">
 
             <TextView
-                android:id="@+id/textView12"
+                android:id="@+id/messageTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Message"
                 android:textColor="@android:color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:layout_marginRight="10dp"/>
 
-            <MultiAutoCompleteTextView
-                android:id="@+id/msgEdit"
-                android:layout_width="match_parent"
+            <EditText
+                android:id="@+id/messageText"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:hint="Leave a message to prof." />
+                android:layout_marginTop="7dp"
+                android:inputType="textMultiLine"
+                android:minLines="3"
+                android:maxLines="5"
+                android:enabled="true"
+                android:gravity="top"
+                android:scrollbars="vertical"
+                android:background="@android:drawable/edit_text"
+                android:hint="Leave a message." />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="18dp">
+
+            <LinearLayout
+                android:layout_column="0"
+                android:layout_span="2"
+                android:layout_gravity="center">
+
+                <Button
+                    android:id="@+id/bookingBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OK"/>
+
+            </LinearLayout>
 
         </TableRow>
     </TableLayout>
-
-    <Button
-        android:id="@+id/sendButt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="80dp"
-        android:layout_marginEnd="32dp"
-        android:onClick="sendRequest"
-        android:text="Send Now"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tableLayout2" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
