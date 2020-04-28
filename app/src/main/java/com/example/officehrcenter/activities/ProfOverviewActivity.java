@@ -7,174 +7,136 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.officehrcenter.R;
+import com.example.officehrcenter.adapters.ProfOverviewAdapter;
+import com.example.officehrcenter.objects.JDBCHelper;
 import com.example.officehrcenter.objects.ProfOverviewDataModel;
+import com.example.officehrcenter.objects.ProfileDataModel;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
-public class ProfOverviewActivity extends AppCompatActivity implements View.OnClickListener {
+public class ProfOverviewActivity extends AppCompatActivity implements OnClickListener, OnItemClickListener {
 
     // widgets
     private ListView profList;
-    private Button btn;
-    private EditText editText;
+    private Button searchBtn;
+    private EditText keyWord;
 
-    private ArrayAdapter adapter;
-
-    private ArrayList<String> nameList = new ArrayList<String>();
-    private ArrayList<String> resultList = new ArrayList<String>();
     private ArrayList<ProfOverviewDataModel> profOverview = new ArrayList<ProfOverviewDataModel>();
+    private ArrayList<ProfOverviewDataModel> resultList = new ArrayList<ProfOverviewDataModel>();
 
+    private final String TAG = "Professor Overview"; // for the use of log
     private Thread t = null;
-    private Toast toast;
-
-    private Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    toast.makeText(ProfOverviewActivity.this, "No Prof. available",
-                            Toast.LENGTH_LONG).show();
-                case 1:
-                    adapter.notifyDataSetChanged();
-            }
-
-        }
-    };
+    private ArrayAdapter<ProfOverviewDataModel> profOverviewAdapter;
+    private JDBCHelper dbConn = new JDBCHelper(); // JDBC helper for connecting and making queries to DB
+    private ProfOverviewDataModel currentData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profoverview);
 
-        btn=(Button)findViewById(R.id.search_button);
-        btn.setOnClickListener(this);
-        editText= (EditText)findViewById(R.id.editTextsearch);
+        keyWord= (EditText)findViewById(R.id.editTextsearch);
+        searchBtn=(Button)findViewById(R.id.search_button);
+        searchBtn.setOnClickListener(this);
 
         profList = (ListView)findViewById(R.id.profList);
-        profList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                String s =nameList.get(position);
-                //Toast.makeText(parent.getContext(), "List item selected "+s, Toast.LENGTH_LONG).show();
-                String tokens[]=s.split(" ");
-                int pos = s.indexOf(" ");
-                String name = s.substring(pos+1);
-                int profid=Integer.parseInt(tokens[0]);
-                Intent intent= new Intent(ProfOverviewActivity.this , // aim class not created now
-                        BookingActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt("profId", profid);
-                bundle.putString("profName", name);
-                intent.putExtras(bundle);
-                startActivity(intent);
-
-            }
-        });
-
-
-
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, nameList);
-        adapter.setDropDownViewResource(
-                android.R.layout.simple_spinner_dropdown_item);
-        profList.setAdapter(adapter);
+        profList.setOnItemClickListener(this);
+        profOverviewAdapter = new ProfOverviewAdapter(resultList, getApplicationContext());
+        profList.setAdapter(profOverviewAdapter);
 
         t = new Thread(background);
         t.start();
-
-
 
     }
 
     private Runnable background = new Runnable() {
         public void run() {
-            String URL = "jdbc:mysql://frodo.bentley.edu:3306/officehrdb";
-            String dbusername = "harry";
-            String dbpassword = "harry";
-            try { //load driver into VM memory
-                Class.forName("com.mysql.jdbc.Driver");
-            } catch (ClassNotFoundException e) {
-                Log.e("JDBC", "Did not load driver");
 
-            }
+            dbConn.connenctDB();
+            String query = "select id, name, office from users where occupation = \"professor\";";
 
-            try { //create connection and statement objects
-                con = DriverManager.getConnection(
-                        URL,
-                        dbusername,
-                        dbpassword);
-                stmt = con.createStatement();
-            } catch (SQLException e) {
-                Log.e("JDBC", "problem connecting");
-            }
-
-            String query = "select * from users where occupation = \"professor\";";
-            Log.e("JDBC", query);
-
+            ResultSet result = dbConn.select(query);
             try {
-                // execute SQL commands to create table, insert data, select contents
-                ResultSet result = stmt.executeQuery(query);
-
-                //read result set, write data to Log
-                if (result.wasNull()) {
+                if (!result.next()) {
+                    Log.i(TAG, "No records found");
                     handler.sendEmptyMessage(0);
                 } else {
                     while (result.next()) {
                         int id = result.getInt("id");
-                        String name = result.getString("name");
-                        nameList.add(String.valueOf(id)+" "+name);
-                        backupList.add(String.valueOf(id)+" "+name);
-
+                        String name = result.getString("username");
+                        String office = result.getString("office");
+                        currentData = new ProfOverviewDataModel(id, name, office);
+                        profOverview.add(currentData);
                     }
+                    resultList = profOverview;
+                    Log.i(TAG, "Query results added to array lists");
                     handler.sendEmptyMessage(1);
-                    System.out.println(String.valueOf(backupList.size()));
                 }
-
             } catch (SQLException e) {
-                Log.e("JDBC", "problems with SQL sent to " + URL +
-                        ": " + e.getMessage());
-            } finally {
-                try { //close connection, may throw checked exception
-                    if (con != null)
-                        con.close();
-                } catch (SQLException e) {
-                    Log.e("JDBC", "close connection failed");
-                }
+                e.printStackTrace();
             }
         }
     };
 
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    Log.i(TAG, "no professor in the database");
+                    // A toast indicating no professors
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(ProfOverviewActivity.this,"No available professor",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                case 1:
+                    profOverviewAdapter.notifyDataSetChanged();
+            }
+
+        }
+    };
 
     @Override
     public void onClick(View v) {
-        System.out.println("Listener: "+String.valueOf(backupList.size()));
-        String s=editText.getText().toString();
-        nameList.clear();
-        for(String s1 : backupList){
-            String[] t= s1.split(" ");
-            int k=t[0].length()+1;
-            String s2=s1.substring(k);
-            System.out.println("Listener:"+s2);
-            if(s2.equals(s)){
-                nameList.add(s1);
+        String searchText = keyWord.getText().toString().trim();
+        if (searchText.equals("")){
+            resultList = profOverview;
+        }else{
+            resultList = new ArrayList<ProfOverviewDataModel>();
+            for(ProfOverviewDataModel prof : profOverview) {
+                if (prof.getName().toLowerCase().contains(searchText.toLowerCase())) {
+                    resultList.add(prof);
+                }
             }
+            profOverviewAdapter.notifyDataSetChanged();
         }
-        adapter.notifyDataSetChanged();
-        Toast.makeText(this,
-                "OnClickListener : "+ String.valueOf(nameList.size()),
-                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        currentData = resultList.get(position);
+        int profId = currentData.getId();
+        Intent intent= new Intent(ProfOverviewActivity.this, AvailabilityActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("profId", profId);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }
