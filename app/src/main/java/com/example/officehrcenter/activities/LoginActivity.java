@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.example.officehrcenter.R;
 import com.example.officehrcenter.application.App;
+import com.example.officehrcenter.objects.JDBCHelper;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 

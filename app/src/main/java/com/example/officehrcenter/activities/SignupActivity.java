@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.officehrcenter.R;
+import com.example.officehrcenter.objects.JDBCHelper;
 
 public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, View.OnClickListener {
 

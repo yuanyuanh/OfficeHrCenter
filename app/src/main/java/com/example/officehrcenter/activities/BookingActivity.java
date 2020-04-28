@@ -19,12 +19,10 @@ import android.widget.Toast;
 
 import com.example.officehrcenter.R;
 import com.example.officehrcenter.application.App;
+import com.example.officehrcenter.objects.JDBCHelper;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;

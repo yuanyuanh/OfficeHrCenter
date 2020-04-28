@@ -12,35 +12,30 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.officehrcenter.R;
+import com.example.officehrcenter.objects.ProfOverviewDataModel;
 
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-
 
 public class ProfOverviewActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ListView listview;
-
-    private ArrayAdapter adapter;
+    // widgets
+    private ListView profList;
     private Button btn;
     private EditText editText;
 
-    private Statement stmt = null;
-    private Connection con = null;
+    private ArrayAdapter adapter;
 
-
-    private ArrayList<String> nameList =new ArrayList<String>();
-    private ArrayList<String> backupList =new ArrayList<String>();
+    private ArrayList<String> nameList = new ArrayList<String>();
+    private ArrayList<String> resultList = new ArrayList<String>();
+    private ArrayList<ProfOverviewDataModel> profOverview = new ArrayList<ProfOverviewDataModel>();
 
     private Thread t = null;
     private Toast toast;
@@ -67,8 +62,8 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
         btn.setOnClickListener(this);
         editText= (EditText)findViewById(R.id.editTextsearch);
 
-        listview = (ListView)findViewById(R.id.list);
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        profList = (ListView)findViewById(R.id.profList);
+        profList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -95,7 +90,7 @@ public class ProfOverviewActivity extends AppCompatActivity implements View.OnCl
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, nameList);
         adapter.setDropDownViewResource(
                 android.R.layout.simple_spinner_dropdown_item);
-        listview.setAdapter(adapter);
+        profList.setAdapter(adapter);
 
         t = new Thread(background);
         t.start();

@@ -1,4 +1,4 @@
-package com.example.officehrcenter.activities;
+package com.example.officehrcenter.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,12 +8,13 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.officehrcenter.R;
+import com.example.officehrcenter.objects.ProfileDataModel;
 
 import java.util.ArrayList;
 
-public class CustomAdapter extends ArrayAdapter<DataModel> {
+public class ProfileCustomAdapter extends ArrayAdapter<ProfileDataModel> {
 
-    private ArrayList<DataModel> dataSet;
+    private ArrayList<ProfileDataModel> dataSet;
     Context mContext;
 
     // View lookup cache
@@ -23,8 +24,8 @@ public class CustomAdapter extends ArrayAdapter<DataModel> {
         TextView msgText;
     }
 
-    public CustomAdapter(ArrayList<DataModel> data, Context context) {
-        super(context, R.layout.activity_profitem, data);
+    public ProfileCustomAdapter(ArrayList<ProfileDataModel> data, Context context) {
+        super(context, R.layout.profile_item, data);
         this.dataSet = data;
         this.mContext=context;
     }
@@ -32,7 +33,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        DataModel dataModel = getItem(position);
+        ProfileDataModel profileDataModel = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder; // view lookup cache stored in tag
 
@@ -42,7 +43,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> {
 
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.activity_profitem, parent, false);
+            convertView = inflater.inflate(R.layout.profile_item, parent, false);
             viewHolder.nameText = (TextView) convertView.findViewById(R.id.name);
             viewHolder.timeText = (TextView) convertView.findViewById(R.id.time);
             viewHolder.msgText = (TextView) convertView.findViewById(R.id.msg);
@@ -54,12 +55,12 @@ public class CustomAdapter extends ArrayAdapter<DataModel> {
             result=convertView;
         }
 
-        viewHolder.nameText.setText("To meet: " + dataModel.getName());
-        viewHolder.timeText.setText("Time: " + dataModel.getTime());
-        if(dataModel.getMsg().equals("")){
+        viewHolder.nameText.setText("To meet: " + profileDataModel.getName());
+        viewHolder.timeText.setText("Time: " + profileDataModel.getTime());
+        if(profileDataModel.getMsg().equals("")){
             viewHolder.msgText.setText("No message");
         }else{
-            viewHolder.msgText.setText("Message: " + dataModel.getMsg());
+            viewHolder.msgText.setText("Message: " + profileDataModel.getMsg());
         }
         // Return the completed view to render on screen
         return convertView;

@@ -1,4 +1,4 @@
-package com.example.officehrcenter.activities;
+package com.example.officehrcenter.objects;
 
 import android.util.Log;
 import android.widget.Toast;

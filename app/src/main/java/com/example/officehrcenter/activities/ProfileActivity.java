@@ -24,17 +24,15 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import com.example.officehrcenter.R;
+import com.example.officehrcenter.adapters.ProfileCustomAdapter;
 import com.example.officehrcenter.application.App;
+import com.example.officehrcenter.objects.JDBCHelper;
+import com.example.officehrcenter.objects.ProfileDataModel;
 
 public class ProfileActivity extends AppCompatActivity implements OnItemClickListener{
 
@@ -43,21 +41,21 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
     private TabHost tabHost;
     private ListView upcomingListView;
     private ListView historyListView;
-    private ArrayList<DataModel> upcomingList = new ArrayList<DataModel>();
-    private ArrayList<DataModel> historyList = new ArrayList<DataModel>();
+    private ArrayList<ProfileDataModel> upcomingList = new ArrayList<ProfileDataModel>();
+    private ArrayList<ProfileDataModel> historyList = new ArrayList<ProfileDataModel>();
 
     private String emailAddress = "";
     private String emailDate = "";
     private String phone = "";
 
-    private ArrayAdapter<DataModel> upcomingAdapter;
-    private ArrayAdapter<DataModel> historyAdapter;
+    private ArrayAdapter<ProfileDataModel> upcomingAdapter;
+    private ArrayAdapter<ProfileDataModel> historyAdapter;
 
     private final String TAG = "Profile"; // for the use of log
     private Thread t = null;
     private JDBCHelper dbConn = new JDBCHelper(); // JDBC helper for connecting and making queries to DB
     private Date now= new Date();
-    private DataModel currentData;
+    private ProfileDataModel currentData;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -76,7 +74,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
         spec.setIndicator("Upcoming");              //put text on tab
         tabHost.addTab(spec);                       //put tab in TabHost container
         upcomingListView = (ListView)findViewById(R.id.upcominglist);
-        upcomingAdapter = new CustomAdapter(upcomingList,getApplicationContext());
+        upcomingAdapter = new ProfileCustomAdapter(upcomingList,getApplicationContext());
         upcomingListView.setAdapter(upcomingAdapter);
         upcomingListView.setOnItemClickListener(this);
 
@@ -86,7 +84,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
         spec.setIndicator("History");              //put text on tab
         tabHost.addTab(spec);                       //put tab in TabHost container
         historyListView = (ListView)findViewById(R.id.historylist);
-        historyAdapter = new CustomAdapter(historyList,getApplicationContext());
+        historyAdapter = new ProfileCustomAdapter(historyList,getApplicationContext());
         historyListView.setAdapter(historyAdapter);
         historyListView.setOnItemClickListener(this);
 
@@ -99,7 +97,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
         public void run() {
 
             dbConn.connenctDB();
-            String query = "select users.id, username, email, phone, reserved_time, msg from reservation join users ";
+            String query = "select users.id, username, email, phone, office, reserved_time, msg from reservation join users ";
 
             if (myApp.isProf()) {
                 query += "on reservation.student_id = users.id where professor_id = " + myApp.getID() + ";";
@@ -118,9 +116,10 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                         String name = result.getString("username");
                         String email = result.getString("email");
                         String phone = result.getString("phone");
+                        String office = result.getString("office");
                         Date dateTime = result.getTimestamp("reserved_time");
                         String msg = result.getString("msg");
-                        currentData = new DataModel(id, name, email, phone, dateTime, msg);
+                        currentData = new ProfileDataModel(id, name, email, phone, office, dateTime, msg);
 
                         if (now.compareTo(dateTime) >= 0) {
                             //history
