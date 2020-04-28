@@ -82,7 +82,7 @@ public class CalendarDate {
      *
      * @return this calendar as {@link Calendar}.
      */
-    public Calendar getCalender() {
+    public Calendar getCalendar() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
@@ -99,12 +99,12 @@ public class CalendarDate {
      * @return the current time as UTC milliseconds from the epoch.
      */
     public long getMillis() {
-        return getCalender().getTimeInMillis();
+        return getCalendar().getTimeInMillis();
     }
 
 
     public int getDayOfWeek() {
-        return getCalender().get(Calendar.DAY_OF_WEEK);
+        return getCalendar().get(Calendar.DAY_OF_WEEK);
     }
 
     /**
@@ -132,7 +132,7 @@ public class CalendarDate {
      * @param value the amount of days added (set a negative value for subtraction).
      */
     public void addDays(int value) {
-        Calendar calendar = getCalender();
+        Calendar calendar = getCalendar();
         calendar.add(Calendar.DATE, value);
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
         mMonth = calendar.get(Calendar.MONTH);
@@ -201,7 +201,7 @@ public class CalendarDate {
      * @return the day of week name like it appears in the Julian and Gregorian calendars as a string.
      */
     public String dayOfWeekToStringName() {
-        return DateUtils.dayOfWeekToString(getCalender().get(Calendar.DAY_OF_WEEK));
+        return DateUtils.dayOfWeekToString(getCalendar().get(Calendar.DAY_OF_WEEK));
     }
 
 }
