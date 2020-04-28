@@ -162,7 +162,7 @@ public class BookingActivity extends AppCompatActivity implements TextToSpeech.O
             dbConn.connenctDB();
 
             String reservedTime = selectedDate + " " + selectedTime + ":00";
-            String query = "update reservation set student_id=" + LoginActivity.userId + ", reserved_time=\'" +
+            String query = "update reservation set student_id=" + myApp.getID() + ", reserved_time=\'" +
                     reservedTime + "\', reserved_status = \'booked\', request_time = current_timestamp(), msg = \'"
                     + msgEdit.getText().toString() + "\' where professor_id=" + profId
                     + " and reserved_time=\'" + reservedTime + "\' and reserved_status is null and student_id is null";

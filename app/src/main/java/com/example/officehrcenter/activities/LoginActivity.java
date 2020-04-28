@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // widgets
     private EditText usernameText;
     private EditText passwordText;
-    private TextView signupText;
+    private TextView incorrectMessage;
     private Button loginButt;
     private Button signupButt;
 
@@ -50,8 +50,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         usernameText = (EditText) findViewById(R.id.userName);
         passwordText = (EditText) findViewById(R.id.password);
-        signupText = (TextView) findViewById(R.id.signupText);
-        signupText.setVisibility(View.INVISIBLE);
+        incorrectMessage = (TextView) findViewById(R.id.incorrectMessage);
+        incorrectMessage.setVisibility(View.INVISIBLE);
 
         loginButt = (Button) findViewById(R.id.loginButt);
         loginButt.setOnClickListener(this);
@@ -116,7 +116,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    signupText.setVisibility(View.VISIBLE);
+                    incorrectMessage.setVisibility(View.VISIBLE);
                     break;
                 case 1:
                     //Intent i = new Intent(LoginActivity.this, BookingActivity.class);
