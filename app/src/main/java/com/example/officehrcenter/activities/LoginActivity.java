@@ -129,6 +129,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     };
 
     /* When the user attempt to sign up, he/she will be led to signUp activity.
+     * After signing up, the user will go back to log in activity.
      */
     public void signUp(View view) {
         Intent i = new Intent(this, SignupActivity.class);
