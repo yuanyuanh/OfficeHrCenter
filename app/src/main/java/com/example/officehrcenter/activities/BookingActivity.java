@@ -29,75 +29,45 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
 
-public class BookingActivity extends AppCompatActivity implements TextToSpeech.OnInitListener, AdapterView.OnItemSelectedListener {
+public class BookingActivity extends AppCompatActivity implements TextToSpeech.OnInitListener, View.OnClickListener {
 
     private App myApp;
 
     private TextView profNameText;
-    private Spinner  dateSpinner;
-    private ArrayAdapter adapter;
-    private Spinner timeSpinner;
-    private ArrayAdapter timeAdapter;
-    private EditText msgEdit;
+    private TextView dateText;
+    private TextView startTimeText;
     private TextView endTimeText;
-    private Button sendButt;
+    private EditText messageText;
 
     private TextToSpeech speaker;
 
     private int profId;
-    private ArrayList<Date> fullDateList = new ArrayList<Date>();
-    private ArrayList<String> dateList =new ArrayList<String>();
-    private ArrayList<String> timeList = new ArrayList<String>();
+    private String date;
+    private String startTime;
+    private String endTime;
+    private String message;
 
     private Thread t = null;
-
-    private String selectedDate;
-    private String selectedTime;
-
-    private Handler bookingHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            int i = msg.what;
-            if (i == 0) {
-                Toast.makeText(BookingActivity.this, "No Timeslot Available for " + profNameText.getText().toString(),
-                        Toast.LENGTH_LONG).show();
-            } else if (i == 1) {
-                adapter.notifyDataSetChanged();
-            } else if (i == 2) {
-                Log.e("JDBC", msg.toString());
-                Toast.makeText(BookingActivity.this,"The time slot is occupied. Try another one.",
-                        Toast.LENGTH_LONG).show();
-            }
-        }
-    };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking);
         myApp = (App)getApplication();
-        Toast.makeText(this, "Dealing with id: " + myApp.getID(),Toast.LENGTH_SHORT).show();
-
-        profNameText = (TextView)findViewById(R.id.profNameText);
-        msgEdit = (EditText)findViewById(R.id.msgEdit);
-        endTimeText = (TextView)findViewById(R.id.endTimeText);
-        sendButt = (Button)findViewById(R.id.sendButt);
-
-        dateList.add(" ");
-        dateSpinner = (Spinner)findViewById(R.id.dateSpinner);
-        dateSpinner.setOnItemSelectedListener(this);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dateList);
-        dateSpinner.setAdapter(adapter);  //connect ArrayAdapter to <Spinner>
-
-        timeList.add(" ");
-        timeSpinner = (Spinner)findViewById(R.id.startTimeSpinner);
-        timeSpinner.setOnItemSelectedListener(this);
-        timeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, timeList);
-        timeSpinner.setAdapter(timeAdapter);
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         profId = bundle.getInt("profId");
+        date = bundle.getString("date");
+        startTime = bundle.getString("startTime");
+        endTime = bundle.getString("endTime");
+
+        profNameText = (TextView)findViewById(R.id.profNameText);
+        startTimeText = (TextView)findViewById(R.id.dateText);
+        startTimeText = (TextView)findViewById(R.id.startTimeText);
+        endTimeText = (TextView)findViewById(R.id.endTimeText);
+        messageText = (EditText)findViewById(R.id.messageText);
+
         profNameText.setText(bundle.getString("profName"));
 
         //Initialize Text to Speech engine (context, listener object)
@@ -135,6 +105,23 @@ public class BookingActivity extends AppCompatActivity implements TextToSpeech.O
             t = null;
         }
     };
+
+    private Handler bookingHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            int i = msg.what;
+            if (i == 0) {
+                Toast.makeText(BookingActivity.this, "No Timeslot Available for " + profNameText.getText().toString(),
+                        Toast.LENGTH_LONG).show();
+            } else if (i == 1) {
+                adapter.notifyDataSetChanged();
+            } else if (i == 2) {
+                Log.e("JDBC", msg.toString());
+                Toast.makeText(BookingActivity.this,"The time slot is occupied. Try another one.",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
 
     public void sendRequest(View view) {
         Log.e("JDBC", "button clicked");
