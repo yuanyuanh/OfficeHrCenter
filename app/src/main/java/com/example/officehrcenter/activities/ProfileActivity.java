@@ -107,7 +107,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
 
             ResultSet result = dbConn.select(query);
             try {
-                if (!result.next()) {
+                if (result.wasNull()) {
                     Log.i(TAG, "No records found");
                     handler.sendEmptyMessage(0);
                 } else {
@@ -241,6 +241,18 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                     Intent dial = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone));
                     if (dial.resolveActivity(getPackageManager()) != null) {
                         startActivity(dial);
+                    }
+                }else{
+                    Toast.makeText(this,"Please select an appointment to call the person to meet", Toast.LENGTH_LONG).show();
+                }
+                return true;
+            case R.id.sms:
+                if(phone.equals("Not available")){
+                    Toast.makeText(this, "Sorry, we don't have the requested phone number", Toast.LENGTH_LONG).show();
+                }else if(!phone.equals("")){
+                    Intent sms = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + phone));
+                    if (sms.resolveActivity(getPackageManager()) != null) {
+                        startActivity(sms);
                     }
                 }else{
                     Toast.makeText(this,"Please select an appointment to call the person to meet", Toast.LENGTH_LONG).show();
