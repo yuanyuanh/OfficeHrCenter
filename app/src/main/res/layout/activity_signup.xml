@@ -8,7 +8,7 @@
 
     <TableLayout
         android:id="@+id/tableLayout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
@@ -22,13 +22,12 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Username" />
+                android:text="@string/userName" />
 
             <EditText
-                android:id="@+id/usernameEditText"
+                android:id="@+id/userEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -40,20 +39,15 @@
             android:layout_height="match_parent" >
 
             <TextView
-                android:id="@+id/usernameTip"
+                android:id="@+id/userTip1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Please enter username"
-                android:textColor="#F44336"
-                android:visibility="invisible" />
+                android:text="@string/userTip1"
+                android:textColor="@color/warning"
+                android:layout_column="0"
+                android:layout_span="2"
+                android:gravity="center"/>
 
-            <TextView
-                android:id="@+id/reuernameTip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Username already exists"
-                android:textColor="#F44336"
-                android:visibility="invisible" />
         </TableRow>
 
         <TableRow
@@ -61,13 +55,12 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Password" />
+                android:text="@string/password" />
 
             <EditText
-                android:id="@+id/passwordEdit"
+                android:id="@+id/passwordEdit1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -79,12 +72,14 @@
             android:layout_height="match_parent" >
 
             <TextView
-                android:id="@+id/passwordTip"
+                android:id="@+id/passwordTip1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Please enter password"
-                android:textColor="#F44336"
-                android:visibility="invisible" />
+                android:text="@string/passwordTip1"
+                android:textColor="@color/warning"
+                android:layout_column="0"
+                android:layout_span="2"
+                android:gravity="center"/>
         </TableRow>
 
         <TableRow
@@ -92,17 +87,50 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Name" />
+                android:text="@string/password2" />
+
+            <EditText
+                android:id="@+id/passwordEdit2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPassword" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                android:id="@+id/passwordTip2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/passwordTip2"
+                android:textColor="@color/warning"
+                android:layout_column="0"
+                android:layout_span="2"
+                android:gravity="center"/>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name" />
 
             <EditText
                 android:id="@+id/nameEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:digits="@string/enabledChars"
+                android:inputType="textPersonName|textCapWords" />
         </TableRow>
 
         <TableRow
@@ -113,9 +141,11 @@
                 android:id="@+id/nameTip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pleaser enter your full name"
-                android:textColor="#F44336"
-                android:visibility="invisible" />
+                android:text="@string/nameTip"
+                android:textColor="@color/warning"
+                android:layout_column="0"
+                android:layout_span="2"
+                android:gravity="center"/>
         </TableRow>
 
         <TableRow
@@ -123,10 +153,9 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Occupation" />
+                android:text="@string/occupation" />
 
             <RadioGroup
                 android:id="@+id/occupationRadio"
@@ -137,13 +166,13 @@
                     android:id="@+id/rbProf"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Professor" />
+                    android:text="@string/occupationProfessor" />
 
                 <RadioButton
                     android:id="@+id/rbStudent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Student" />
+                    android:text="@string/occupationStudent" />
             </RadioGroup>
         </TableRow>
 
@@ -155,9 +184,11 @@
                 android:id="@+id/occupationTIp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Please select an occupation"
-                android:textColor="#F44336"
-                android:visibility="invisible" />
+                android:text="@string/occupationTip"
+                android:textColor="@color/warning"
+                android:layout_column="0"
+                android:layout_span="2"
+                android:gravity="center"/>
         </TableRow>
 
         <TableRow
@@ -168,16 +199,14 @@
                 android:id="@+id/officeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Office Address"
-                android:visibility="invisible" />
+                android:text="@string/office" />
 
             <EditText
                 android:id="@+id/officeEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:visibility="invisible" />
+                android:inputType="textPersonName" />
         </TableRow>
 
         <TableRow
@@ -188,9 +217,11 @@
                 android:id="@+id/officeTip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Please enter your office address"
-                android:textColor="#F44336"
-                android:visibility="invisible" />
+                android:text="@string/officeTip"
+                android:textColor="@color/warning"
+                android:layout_column="0"
+                android:layout_span="2"
+                android:gravity="center"/>
         </TableRow>
 
         <TableRow
@@ -201,16 +232,14 @@
                 android:id="@+id/phoneText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Phone"
-                android:visibility="invisible" />
+                android:text="@string/phone" />
 
             <EditText
                 android:id="@+id/phoneEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="phone"
-                android:visibility="invisible" />
+                android:inputType="phone" />
         </TableRow>
 
         <TableRow
@@ -221,16 +250,14 @@
                 android:id="@+id/emailText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="E-mail"
-                android:visibility="invisible" />
+                android:text="@string/email" />
 
             <EditText
                 android:id="@+id/emailEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textEmailAddress"
-                android:visibility="invisible" />
+                android:inputType="textEmailAddress" />
         </TableRow>
 
     </TableLayout>
@@ -239,8 +266,7 @@
         android:id="@+id/doneButt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="42dp"
-        android:onClick="signUp"
+        android:layout_marginTop="@dimen/signUpButtonTopMargin"
         android:text="Done"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

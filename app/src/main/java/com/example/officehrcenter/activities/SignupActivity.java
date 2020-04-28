@@ -1,14 +1,14 @@
 package com.example.officehrcenter.activities;
 
+/** This is the signup activity where users can create new accounts.
+ * @version 1.0
+ */
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,71 +19,94 @@ import android.widget.Toast;
 
 import com.example.officehrcenter.R;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, View.OnClickListener {
 
-public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener{
-
-    private EditText usernameEdit;
-    private EditText passwordEdit;
+    // widgets
+    private EditText userEdit;
+    private EditText passwordEdit1;
+    private EditText passwordEdit2;
     private EditText nameEdit;
     private RadioGroup occupationGroup;
-    private TextView officeText;
     private EditText officeEdit;
+    private EditText phoneEdit;
+    private EditText emailEdit;
+
+    private TextView officeText;
+    private TextView phoneText;
+    private TextView emailText;
+
     private Button doneButt;
-    private TextView usernameTip;
-    private TextView passwordTip;
+
+    private TextView userTip;
+    private TextView passwordTip1;
+    private TextView passwordTip2;
     private TextView nameTip;
     private TextView occupationTip;
     private TextView officeTip;
-    private TextView usernameInvalidTip;
-    private EditText phoneEdit;
-    private EditText emailEdit;
-    private TextView phoneText;
-    private TextView emailText;
+
     private int checkId;
+    private boolean requiredFilled;
 
     private Thread t = null;
-    private static final String SIGNUPMSG = "signup";
-    private final String success = "SUCCESS";
-    private final String fail = "FAIL";
-    private final String taken = "username already exists";
-
-    private Toast toast;
-    private Statement stmt = null;
-    private Connection con = null;
+    private static final String TAG = "Sign Up";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        usernameEdit = (EditText) findViewById(R.id.usernameEditText);
-        passwordEdit = (EditText) findViewById(R.id.passwordEdit);
+        // Set tips and variables for professors as invisible
+        userEdit = (EditText) findViewById(R.id.userEdit);
+        passwordEdit1 = (EditText) findViewById(R.id.passwordEdit1);
+        passwordEdit2 = (EditText) findViewById(R.id.passwordEdit2);
         nameEdit = (EditText) findViewById(R.id.nameEdit);
         occupationGroup = (RadioGroup)findViewById(R.id.occupationRadio);
         occupationGroup.setOnCheckedChangeListener(this);
-        doneButt = (Button)findViewById(R.id.doneButt);
-        officeText = (TextView)findViewById(R.id.officeText);
         officeEdit = (EditText)findViewById(R.id.officeEdit);
-        usernameTip = (TextView)findViewById(R.id.usernameTip);
-        passwordTip = (TextView)findViewById(R.id.passwordTip);
-        nameTip = (TextView)findViewById(R.id.nameTip);
-        occupationTip = (TextView)findViewById(R.id.occupationTIp);
-        officeTip = (TextView)findViewById(R.id.officeTip);
+        officeEdit.setVisibility(View.INVISIBLE);
         emailEdit = (EditText)findViewById(R.id.emailEdit);
+        emailEdit.setVisibility(View.INVISIBLE);
         phoneEdit = (EditText)findViewById(R.id.phoneEdit);
-        emailText = (TextView)findViewById(R.id.emailText);
+        phoneEdit.setVisibility(View.INVISIBLE);
+
+        officeTip.setVisibility(View.INVISIBLE);
+        officeText = (TextView)findViewById(R.id.officeText);
+        officeText.setVisibility(View.INVISIBLE);
         phoneText = (TextView)findViewById(R.id.phoneText);
-        usernameInvalidTip = (TextView)findViewById(R.id.reuernameTip);
+        phoneText.setVisibility(View.INVISIBLE);
+        emailText = (TextView)findViewById(R.id.emailText);
+        emailText.setVisibility(View.INVISIBLE);
 
+        userTip = (TextView)findViewById(R.id.userTip1);
+        userTip.setVisibility(View.INVISIBLE);
+        passwordTip1 = (TextView)findViewById(R.id.passwordTip1);
+        passwordTip1.setVisibility(View.INVISIBLE);
+        passwordTip2 = (TextView)findViewById(R.id.passwordTip2);
+        passwordTip2.setVisibility(View.INVISIBLE);
+        nameTip = (TextView)findViewById(R.id.nameTip);
+        nameTip.setVisibility(View.INVISIBLE);
+        occupationTip = (TextView)findViewById(R.id.occupationTIp);
+        occupationTip.setVisibility(View.INVISIBLE);
+        officeTip = (TextView)findViewById(R.id.officeTip);
+        officeTip.setVisibility(View.INVISIBLE);
 
-        toast.makeText(this, "Sign up failed. Please try again.", Toast.LENGTH_LONG);
+        doneButt = (Button)findViewById(R.id.doneButt);
+        doneButt.setOnClickListener(this);
+
     }
 
+    @Override
+    public void onClick(View v) {
+        try{
+            signUp(v);
+        }catch(Exception e){
+            Toast.makeText(this, "Sign up failed. Please try again.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /* If the new user is a professor, collect other required information.
+     * If a student, no need to collect those information.
+     */
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         checkId = checkedId;
@@ -106,38 +129,38 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
     }
 
     public void signUp(View view) {
-        int filled = 0;
+        requiredFilled = true;
         //check all field is filled
-        if (usernameEdit.getText().toString().isEmpty()) {
-            usernameTip.setVisibility(View.VISIBLE);
-        } else {
-            filled += 1;
+        if (userEdit.getText().toString().isEmpty()) {
+            userTip.setVisibility(View.VISIBLE);
+            requiredFilled = false;
         }
-        if (passwordEdit.getText().toString().isEmpty()) {
-            passwordTip.setVisibility(View.VISIBLE);
-        } else {
-            filled += 1;
+        if (passwordEdit1.getText().toString().isEmpty()) {
+            passwordTip1.setVisibility(View.VISIBLE);
+            requiredFilled = false;
+        }
+        if (!passwordEdit1.getText().toString().equals(passwordEdit2.getText().toString())) {
+            passwordTip2.setVisibility(View.VISIBLE);
+            requiredFilled = false;
         }
         if (nameEdit.getText().toString().isEmpty()) {
             nameTip.setVisibility(View.VISIBLE);
-        } else {
-            filled += 1;
+            requiredFilled = false;
         }
         if (occupationGroup.getCheckedRadioButtonId() == -1) {
             occupationTip.setVisibility(View.VISIBLE);
+            requiredFilled = false;
         } else {
-            filled += 1;
             if (checkId == R.id.rbProf) {
                 if (officeEdit.getText().toString().isEmpty()) {
                     officeTip.setVisibility(View.VISIBLE);
-                } else {
-                    filled +=1;
+                    requiredFilled = false;
                 }
             }
         }
 
-        if ((checkId == R.id.rbProf && filled == 5 ) ||
-                (checkId == R.id.rbStudent && filled == 4)) {
+        if (!requiredFilled) {
+            Log.i(TAG, "All required filled, start to update the database");
             t = new Thread(background);
             t.start();
         }
@@ -148,11 +171,13 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    Log.e("JDBC", "Sign up succeeded");
+                    Log.i(TAG, "Sign up successfully");
                     finish();
                     break;
                 case 1:
-                    usernameInvalidTip.setVisibility(View.VISIBLE);
+                    Log.i(TAG, "Redundant user");
+                    userTip.setText(getString(R.string.userTip2));
+                    userTip.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -168,16 +193,23 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
             } else {
                 updateStm += ", office, email, phone)";
             }
-            updateStm += " values(\'" + usernameEdit.getText().toString() +
-                    "\', \'" + passwordEdit.getText().toString() + "\', \'" + nameEdit.getText().toString() +
+            updateStm += " values(\'" + userEdit.getText().toString() +
+                    "\', \'" + passwordEdit1.getText().toString() +
+                    "\', \'" + nameEdit.getText().toString() +
                     "\', \'";
             if (occupationGroup.getCheckedRadioButtonId() == R.id.rbProf) {
-                updateStm += "professor" + "\', \'" + officeEdit.getText().toString() + "\', \'" + emailEdit.getText().toString()
-                        + "\', \'" + phoneEdit.getText().toString() + "\');";
+                updateStm += "professor" +
+                        "\', \'" + officeEdit.getText().toString() +
+                        "\', \'" + emailEdit.getText().toString() +
+                        "\', \'" + phoneEdit.getText().toString() + "\');";
             } else {
                 updateStm += "student\');";
             }
             int count = dbConn.update(updateStm);
+
+            /* As the column for user name is set as unique in the database,
+             * the error for duplicate user name will be caught when updating.
+             */
             if (count > 0) {
                 signUpHandler.sendEmptyMessage(0);
             } else {
@@ -189,11 +221,10 @@ public class SignupActivity extends AppCompatActivity implements RadioGroup.OnCh
         }
     };
 
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         t = null;
     }
+
 }

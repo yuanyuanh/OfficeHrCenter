@@ -1,12 +1,31 @@
 <resources>
     <string name="app_name">Office Hour Center</string>
 
-    <!--LogIn Activity-->
+    <!--LogIn and SignUp Activity-->
     <string name="userName">User name</string>
     <string name="password">Password</string>
+    <string name="password2">Re-check</string>
+    <string name="name">Your name</string>
+    <string name="occupation">Occupation</string>
+    <string name="occupationProfessor">Professor</string>
+    <string name="occupationStudent">Student</string>
+    <string name="office">Office Address</string>
+    <string name="phone">Phone</string>
+    <string name="email">E-mail</string>
+
     <string name="login">LOGIN</string>
-    <string name="signup">SIGN UP</string>
+    <string name="signUp">SIGN UP</string>
+
     <string name="incorrectMessage">Incorrect username/password</string>
+    <string name="userTip1">Please enter username</string>
+    <string name="userTip2">Username already exists</string>
+    <string name="passwordTip1">Please enter password</string>
+    <string name="passwordTip2">The password does not match</string>
+    <string name="nameTip">Please enter your full name</string>
+    <string name="occupationTip">Please select your occupation</string>
+    <string name="officeTip">Please enter your office address</string>
+
+    <string name="enabledChars"> abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
 
     <string name="professor_name">Professor Name</string>
     <string name="search">Search</string>
