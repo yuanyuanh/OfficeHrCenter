@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/fruktur</item>
+        <item>@font/mr_dafoe</item>
+        <item>@font/press_start_2p</item>
+        <item>@font/uncial_antiqua</item>
+        <item>@font/wendy_one</item>
+    </array>
+</resources>
