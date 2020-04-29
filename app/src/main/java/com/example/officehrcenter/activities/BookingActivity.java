@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -107,11 +108,35 @@ public class BookingActivity extends AppCompatActivity implements TextToSpeech.O
             } else {
                 // The TTS engine has been successfully initialized
                 Log.i(TAG_SPEAKER, "TTS Initialization successful.");
+                ttsInitialized();
             }
         } else {
             // Initialization failed.
             Log.e(TAG_SPEAKER, "Could not initialize TextToSpeech.");
         }
+    }
+
+    public void ttsInitialized(){
+        speaker.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+            @Override
+            public void onStart(String utteranceId) {  }
+
+            @Override
+            public void onDone(String utteranceId) {
+                BookingActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        t = new Thread(checkAvail);
+                        t.start();
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String utteranceId) {
+                Log.e(TAG, "error on " + utteranceId);
+            }
+        });
     }
 
     @Override
@@ -129,8 +154,6 @@ public class BookingActivity extends AppCompatActivity implements TextToSpeech.O
                 speak("Your message is: " + message);
             }
         }
-        t = new Thread(checkAvail);
-        t.start();
     }
 
     private Runnable checkAvail = new Runnable() {
