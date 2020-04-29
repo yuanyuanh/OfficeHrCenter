@@ -27,7 +27,8 @@ public class ProfileDataModel {
         this.phone = phone;
         this.office = office;
         this.time = SQL_DATE_FORMAT.format(dateTime);
-        this.msg = msg;
+        this.msg = msg.trim().replace("\n"," ");
+        System.out.println(this.msg);
     }
 
     public int getID(){return this.id;}

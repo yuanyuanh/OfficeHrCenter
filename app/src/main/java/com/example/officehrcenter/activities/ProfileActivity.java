@@ -83,7 +83,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
         // --------------------------------Tab 2-----------------------------------
         spec = tabHost.newTabSpec("history");	//create new tab specification
         spec.setContent(R.id.tab2);                 //add tab view content
-        spec.setIndicator("History");              //put text on tab
+        spec.setIndicator("History");               //put text on tab
         tabHost.addTab(spec);                       //put tab in TabHost container
         historyListView = (ListView)findViewById(R.id.historylist);
         historyAdapter = new ProfileAdapter(historyList,getApplicationContext());
