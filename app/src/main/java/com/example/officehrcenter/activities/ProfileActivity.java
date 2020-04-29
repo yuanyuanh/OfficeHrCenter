@@ -99,10 +99,11 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
 
     }
 
+    // For the use of updating UI
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 0:
+                case 0:     // When user has no reservations to display
                     Log.i(TAG, "no reservation history");
                     // A toast indicating no reservation
                     runOnUiThread(new Runnable() {
@@ -111,12 +112,12 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                         }
                     });
                     break;
-                case 1:
+                case 1:     // Successfully retrieved reservation data from DB
                     upcomingAdapter.notifyDataSetChanged();
                     historyAdapter.notifyDataSetChanged();
                     Log.i(TAG, "Reservation history updated successfully");
                     break;
-                case 2:
+                case 2:    // Successfully canceled selected reservation
                     runOnUiThread(new Runnable() {
                         public void run() {
                             Toast.makeText(ProfileActivity.this,"You have canceled the avtivity successfully",Toast.LENGTH_LONG).show();
@@ -130,7 +131,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                         }
                     });
                     break;
-                case 3:
+                case 3:     // When 0 reservation has been cancelled
                     runOnUiThread(new Runnable() {
                         public void run() {
                             Toast.makeText(ProfileActivity.this,"Failed to cancel reservation. Please try again",Toast.LENGTH_LONG).show();
@@ -144,6 +145,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
     private Runnable background = new Runnable() {
         public void run() {
 
+            // Construct query to get all reservations related to current user from database
             dbConn.connenctDB();
             String query = "select users.id, name, email, phone, office, reserved_time, msg from reservation ";
 
@@ -194,6 +196,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
     private Runnable cancel = new Runnable() {
         @Override
         public void run() {
+            // Construct query to delete selected appointment in database
             String query;
             if(myApp.isProf()){
                 query = "DELETE FROM reservation WHERE professor_id = " + myApp.getID()
@@ -214,7 +217,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
         }
     };
 
-    // listener methods for callbacks
+    // listener methods for list views
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
         if(parent.getId() == R.id.upcominglist) {
             currentData = upcomingList.get(position);

@@ -76,6 +76,7 @@ public class AvailabilityActivity extends AppCompatActivity implements OnDateSel
         mCustomCalendar = (CustomCalendarView) findViewById(R.id.activity_main_view_custom_calendar);
         mCustomCalendar.setOnDateSelectedListener(this);
 
+        // Setup default available time slots (default available time is 9:00 - 18:00)
         int tempHour = STARTHOUR;
         for(int idx = 0; idx < hourTable.length; idx++) {
             if (tempHour < 10) {
@@ -98,11 +99,11 @@ public class AvailabilityActivity extends AppCompatActivity implements OnDateSel
             hourAvail.add(currentHour);
         }
 
+
         availListView = (ListView)findViewById(R.id.availList);
         availabilityAdapter = new AvailabilityAdapter(hourAvail,getApplicationContext());
         availListView.setAdapter(availabilityAdapter);
         availListView.setOnItemClickListener(this);
-
     }
 
     @Override
