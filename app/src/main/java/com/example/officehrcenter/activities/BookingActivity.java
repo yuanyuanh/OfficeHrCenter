@@ -35,6 +35,7 @@ public class BookingActivity extends AppCompatActivity implements TextToSpeech.O
     private TextView messageTextView;
     private EditText messageText;
     private Button bookingBtn;
+    private Button bookingCancelBtn;
 
     private TextToSpeech speaker;
 
@@ -73,6 +74,8 @@ public class BookingActivity extends AppCompatActivity implements TextToSpeech.O
         messageText = (EditText)findViewById(R.id.messageText);
         bookingBtn = (Button)findViewById(R.id.bookingBtn);
         bookingBtn.setOnClickListener(this);
+        bookingCancelBtn = (Button)findViewById(R.id.bookingCancelBtn);
+        bookingCancelBtn.setOnClickListener(this);
 
         if(myApp.isProf()){
             titleText.setText("Set my own time");
@@ -141,21 +144,35 @@ public class BookingActivity extends AppCompatActivity implements TextToSpeech.O
 
     @Override
     public void onClick(View v) {
-        Log.i(TAG, "button clicked");
-        message = messageText.getText().toString().trim();
-        if (!message.isEmpty()) {
-            // if speaker is talking, stop it
-            if(speaker.isSpeaking()){
-                Log.i(TAG_SPEAKER, "Speaker Speaking");
-                speaker.stop();
-                // else start speech
-            } else {
-                Log.i(TAG_SPEAKER, "Speaker Not Already Speaking");
-                speak("Your message is: " + message);
-            }
-        }else{
-            t = new Thread(checkAvail);
-            t.start();
+        switch(v.getId()){
+            case R.id.bookingBtn:
+                Log.i(TAG, "booking button clicked");
+                message = messageText.getText().toString().trim();
+                if (!message.isEmpty()) {
+                    // if speaker is talking, stop it
+                    if(speaker.isSpeaking()){
+                        Log.i(TAG_SPEAKER, "Speaker Speaking");
+                        speaker.stop();
+                        // else start speech
+                    } else {
+                        Log.i(TAG_SPEAKER, "Speaker Not Already Speaking");
+                        speak("Your message is: " + message);
+                    }
+                }else{
+                    t = new Thread(checkAvail);
+                    t.start();
+                }
+                break;
+
+            case R.id.bookingCancelBtn:
+                Intent intent= new Intent(BookingActivity.this, AvailabilityActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("profId", profId);
+                bundle.putString("profName", profName);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                finish();
+                break;
         }
     }
 

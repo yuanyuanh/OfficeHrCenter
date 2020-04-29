@@ -3,6 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/cancel"
+        android:title="Cancel"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/email"
+        android:title="Email"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/dial"
+        android:title="Dial"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/sms"
+        android:title="Short Message"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/booking"
         android:title="Make Reservation"
         app:showAsAction="never" />
@@ -13,18 +33,8 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/email"
-        android:title="Email"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/dial"
-        android:title="Dial"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/sms"
-        android:title="SMS" />
-    <item
-        android:id="@+id/cancel"
-        android:title="@android:string/cancel" />
+        android:id="@+id/logOut"
+        android:title="Log Out"
+        app:showAsAction="never" />
 
 </menu>

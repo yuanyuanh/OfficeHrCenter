@@ -1,5 +1,7 @@
 package com.example.officehrcenter.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,12 +13,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.officehrcenter.R;
 import com.example.officehrcenter.adapters.AvailabilityAdapter;
-import com.example.officehrcenter.adapters.ProfileAdapter;
 import com.example.officehrcenter.application.App;
 import com.example.officehrcenter.interfaces.OnDateSelectedListener;
 import com.example.officehrcenter.objects.AvailabilityDataModel;
@@ -52,6 +55,7 @@ public class AvailabilityActivity extends AppCompatActivity implements OnDateSel
     private final int ENDHOUR = 18;
     private boolean halfHour = false;
     private AvailabilityDataModel currentHour;
+    private AlertDialog dialog;
 
     private String[] hourTable = new String[(ENDHOUR-STARTHOUR)*2];
     private Date now= new Date();
@@ -177,7 +181,59 @@ public class AvailabilityActivity extends AppCompatActivity implements OnDateSel
             bundle.putString("endTime", currentHour.getEndTime());
             intent.putExtras(bundle);
             startActivity(intent);
+            finish();
         }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.avail_menu, menu);
+        return true;
+    }
+
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
+        MenuItem toProf = menu.findItem(R.id.backToProfOverview);
+        if(myApp.isProf()){
+            toProf.setVisible(false);
+        }else{
+            toProf.setVisible(true);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            // go to booking activity
+            case R.id.backToProfOverview:
+                Intent profOverview= new Intent(AvailabilityActivity.this, ProfOverviewActivity.class);
+                startActivity(profOverview);
+                finish();
+                return true;
+
+            case R.id.logOut:
+                dialog = new AlertDialog.Builder(this).create();
+                dialog.setTitle("Log out");
+                dialog.setMessage("Are you sure that you want to log out?");
+                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        myApp.setID(0);
+                        myApp.setIfProf("student");
+                        Intent logOut = new Intent(AvailabilityActivity.this, LoginActivity.class);
+                        startActivity(logOut);
+                        finish();
+                        Log.i(TAG, "Log out finished.");
+                    }
+                });
+                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {  }
+                });
+                dialog.show();
+
+                return true;
+        }
+        return true;
     }
 
     public void setAvailability(String timeString){

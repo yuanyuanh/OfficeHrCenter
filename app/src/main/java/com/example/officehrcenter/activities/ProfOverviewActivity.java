@@ -1,11 +1,15 @@
 package com.example.officehrcenter.activities;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -20,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.officehrcenter.R;
 import com.example.officehrcenter.adapters.ProfOverviewAdapter;
+import com.example.officehrcenter.application.App;
 import com.example.officehrcenter.objects.JDBCHelper;
 import com.example.officehrcenter.objects.ProfOverviewDataModel;
 import com.example.officehrcenter.objects.ProfileDataModel;
@@ -31,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class ProfOverviewActivity extends AppCompatActivity implements OnClickListener, OnItemClickListener {
+
+    private App myApp; // current application
 
     // widgets
     private ListView profList;
@@ -45,11 +52,13 @@ public class ProfOverviewActivity extends AppCompatActivity implements OnClickLi
     private ArrayAdapter<ProfOverviewDataModel> profOverviewAdapter;
     private JDBCHelper dbConn = new JDBCHelper(); // JDBC helper for connecting and making queries to DB
     private ProfOverviewDataModel currentData;
+    private AlertDialog dialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profoverview);
+        myApp = (App)getApplication();
 
         keyWord= (EditText)findViewById(R.id.editTextsearch);
         searchBtn=(Button)findViewById(R.id.search_button);
@@ -147,5 +156,52 @@ public class ProfOverviewActivity extends AppCompatActivity implements OnClickLi
         bundle.putString("profName", currentData.getName());
         intent.putExtras(bundle);
         startActivity(intent);
+        finish();
     }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.avail_menu, menu);
+        return true;
+    }
+
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
+        MenuItem toProf = menu.findItem(R.id.backToProfOverview);
+        if(myApp.isProf()){
+            toProf.setVisible(false);
+        }else{
+            toProf.setVisible(true);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.logOut:
+                dialog = new AlertDialog.Builder(this).create();
+                dialog.setTitle("Log out");
+                dialog.setMessage("Are you sure that you want to log out?");
+                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        myApp.setID(0);
+                        myApp.setIfProf("student");
+                        Intent logOut = new Intent(ProfOverviewActivity.this, LoginActivity.class);
+                        startActivity(logOut);
+                        finish();
+                        Log.i(TAG, "Log out finished.");
+                    }
+                });
+                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {  }
+                });
+                dialog.show();
+
+                return true;
+        }
+        return true;
+    }
+
+
 }

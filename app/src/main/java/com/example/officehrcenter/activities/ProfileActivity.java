@@ -6,6 +6,8 @@ package com.example.officehrcenter.activities;
  * @version 1.0
  */
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -56,6 +58,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
     private JDBCHelper dbConn = new JDBCHelper(); // JDBC helper for connecting and making queries to DB
     private Date now= new Date();
     private ProfileDataModel currentData;
+    private AlertDialog dialog;
 
     private int selected;
 
@@ -256,6 +259,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
             case R.id.booking:
                 Intent booking = new Intent(ProfileActivity.this, ProfOverviewActivity.class);
                 startActivity(booking);
+                finish();
                 return true;
 
             // go to profAvail activity
@@ -266,6 +270,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                 bundle.putString("profName", "Myself");
                 avail.putExtras(bundle);
                 startActivity(avail);
+                finish();
                 return true;
 
             // cancel the appointment
@@ -304,6 +309,8 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                     Toast.makeText(this,"Please select an appointment to call the person to meet", Toast.LENGTH_LONG).show();
                 }
                 return true;
+
+            // text message
             case R.id.sms:
                 if(phone.equals("Not available")){
                     Toast.makeText(this, "Sorry, we don't have the requested phone number", Toast.LENGTH_LONG).show();
@@ -317,6 +324,25 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                 }
                 return true;
 
+            // exit
+            case R.id.logOut:
+                dialog = new AlertDialog.Builder(this).create();
+                dialog.setTitle("Log out");
+                dialog.setMessage("Are you sure that you want to log out?");
+                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        myApp.setID(0);
+                        myApp.setIfProf("student");
+                        Intent logOut = new Intent(ProfileActivity.this, LoginActivity.class);
+                        startActivity(logOut);
+                        finish();
+                        Log.i(TAG, "Log out finished.");
+                    }
+                });
+                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {  }
+                });
+                dialog.show();
         }
         return true;
     }
