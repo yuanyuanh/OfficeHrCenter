@@ -160,18 +160,7 @@ public class ProfOverviewActivity extends AppCompatActivity implements OnClickLi
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.avail_menu, menu);
-        return true;
-    }
-
-    public boolean onPrepareOptionsMenu(Menu menu)
-    {
-        MenuItem toProf = menu.findItem(R.id.backToProfOverview);
-        if(myApp.isProf()){
-            toProf.setVisible(false);
-        }else{
-            toProf.setVisible(true);
-        }
+        getMenuInflater().inflate(R.menu.prof_menu, menu);
         return true;
     }
 
