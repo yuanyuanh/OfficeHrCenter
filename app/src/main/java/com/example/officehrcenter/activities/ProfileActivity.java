@@ -180,6 +180,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                     Log.i(TAG, "Query results added to array lists");
                     Collections.sort(upcomingList);
                     Collections.sort(historyList);
+                    Collections.reverse(historyList);
                     handler.sendEmptyMessage(1);
                 }
             } catch (SQLException e) {
