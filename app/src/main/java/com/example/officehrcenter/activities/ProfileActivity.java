@@ -187,9 +187,16 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
     private Runnable cancel = new Runnable() {
         @Override
         public void run() {
-            String query = "DELETE FROM reservation WHERE professor_id = " + currentData.getID()
-                    + " and student_id = " + myApp.getID()
-                    + " and reserved_time = \'" + currentData.getTime() + "\';";
+            String query;
+            if(myApp.isProf()){
+                query = "DELETE FROM reservation WHERE professor_id = " + myApp.getID()
+                        + " and student_id = " + currentData.getID()
+                        + " and reserved_time = \'" + currentData.getTime() + "\';";
+            }else{
+                query = "DELETE FROM reservation WHERE professor_id = " + currentData.getID()
+                        + " and student_id = " + myApp.getID()
+                        + " and reserved_time = \'" + currentData.getTime() + "\';";
+            }
             dbConn.connenctDB();
             int count = dbConn.update(query);
             if (count > 0) {
