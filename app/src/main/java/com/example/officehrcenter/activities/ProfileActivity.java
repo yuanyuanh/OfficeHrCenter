@@ -116,8 +116,13 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                     runOnUiThread(new Runnable() {
                         public void run() {
                             Toast.makeText(ProfileActivity.this,"You have canceled the reservation successfully",Toast.LENGTH_LONG).show();
-                            upcomingList.remove(selected);
-                            upcomingAdapter.notifyDataSetChanged();
+                            if(upcomingList.contains(currentData)){
+                                upcomingList.remove(selected);
+                                upcomingAdapter.notifyDataSetChanged();
+                            }else{
+                                historyList.remove(selected);
+                                historyAdapter.notifyDataSetChanged();
+                            }
                         }
                     });
                     break;
