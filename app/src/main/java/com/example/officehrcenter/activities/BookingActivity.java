@@ -9,6 +9,7 @@ import android.os.Message;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -285,6 +286,20 @@ public class BookingActivity extends AppCompatActivity implements TextToSpeech.O
     public void speak(String output){
         //	speaker.speak(output, TextToSpeech.QUEUE_FLUSH, null);  //for APIs before 21
         speaker.speak(output, TextToSpeech.QUEUE_FLUSH, null, "Id 0");
+    }
+
+    // enable the use of back key for returning to the previous page
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent intent= new Intent(BookingActivity.this, AvailabilityActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt("profId", profId);
+            bundle.putString("profName", profName);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     public void onDestroy(){

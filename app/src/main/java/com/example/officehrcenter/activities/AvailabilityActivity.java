@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -234,6 +235,16 @@ public class AvailabilityActivity extends AppCompatActivity implements OnDateSel
                 return true;
         }
         return true;
+    }
+
+    // enable the use of back key for returning to the previous page
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent intent= new Intent(AvailabilityActivity.this, ProfileActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     public void setAvailability(String timeString){
