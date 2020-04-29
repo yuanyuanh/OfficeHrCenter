@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import com.example.officehrcenter.R;
 import com.example.officehrcenter.adapters.ProfileAdapter;
@@ -177,6 +178,8 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                         }
                     }
                     Log.i(TAG, "Query results added to array lists");
+                    Collections.sort(upcomingList);
+                    Collections.sort(historyList);
                     handler.sendEmptyMessage(1);
                 }
             } catch (SQLException e) {
@@ -209,7 +212,6 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
 
         }
     };
-
 
     // listener methods for callbacks
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {

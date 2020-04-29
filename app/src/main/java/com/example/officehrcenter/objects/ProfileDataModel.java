@@ -4,7 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ProfileDataModel {
+public class ProfileDataModel implements Comparable<ProfileDataModel>{
 
     private int id;
     private String name;
@@ -56,6 +56,11 @@ public class ProfileDataModel {
 
     public String getMsg(){
         return this.msg;
+    }
+
+    @Override
+    public int compareTo(ProfileDataModel o) {
+        return this.getTime().compareTo(o.getTime());
     }
 
 }
