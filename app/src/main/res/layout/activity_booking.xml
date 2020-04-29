@@ -58,6 +58,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
                 android:text="Start At"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
@@ -94,16 +95,16 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="18dp">
+            android:layout_marginTop="15dp">
 
             <TextView
                 android:id="@+id/messageTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Message"
+                android:text="Note:"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
-                android:layout_marginRight="10dp"/>
+                android:layout_marginRight="20dp"/>
 
             <EditText
                 android:id="@+id/messageText"
@@ -117,7 +118,7 @@
                 android:gravity="top"
                 android:scrollbars="vertical"
                 android:background="@android:drawable/edit_text"
-                android:hint="Leave a message." />
+                android:hint="Leave a note." />
 
         </TableRow>
 

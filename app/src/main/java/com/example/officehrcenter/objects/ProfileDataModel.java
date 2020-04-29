@@ -18,6 +18,7 @@ public class ProfileDataModel {
     private static final DateFormat SQL_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public ProfileDataModel(int id, String name, String email, String phone, String office, Date dateTime, String msg){
+        if (name == null || name.equals("null")){ name = ""; }
         if (email == null || email.equals("null")){ email = ""; }
         if (phone == null || phone.equals("null")){ phone = ""; }
         if (msg == null || msg.equals("null")){ msg = ""; }

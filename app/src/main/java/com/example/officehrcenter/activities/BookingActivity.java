@@ -78,10 +78,8 @@ public class BookingActivity extends AppCompatActivity implements TextToSpeech.O
         bookingCancelBtn.setOnClickListener(this);
 
         if(myApp.isProf()){
-            titleText.setText("Set my own time");
+            titleText.setText("Set my own activity");
             profNameText.setVisibility(View.INVISIBLE);
-            messageText.setVisibility(View.INVISIBLE);
-            messageTextView.setVisibility(View.INVISIBLE);
         }else{
             titleText.setText("Reserve a meeting");
         }
@@ -156,7 +154,7 @@ public class BookingActivity extends AppCompatActivity implements TextToSpeech.O
                         // else start speech
                     } else {
                         Log.i(TAG_SPEAKER, "Speaker Not Already Speaking");
-                        speak("Your message is: " + message);
+                        speak("Your note is: " + message);
                     }
                 }else{
                     t = new Thread(checkAvail);
@@ -247,7 +245,7 @@ public class BookingActivity extends AppCompatActivity implements TextToSpeech.O
                     if (myApp.isProf()){
                         runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(BookingActivity.this,"You've added an unavailable time slot",Toast.LENGTH_LONG).show();
+                                Toast.makeText(BookingActivity.this,"You've added a new personal activity",Toast.LENGTH_LONG).show();
                             }
                         });
                     }else{

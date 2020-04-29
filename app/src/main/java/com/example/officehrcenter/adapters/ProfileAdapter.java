@@ -56,12 +56,16 @@ public class ProfileAdapter extends ArrayAdapter<ProfileDataModel> {
             result=convertView;
         }
 
-        viewHolder.nameText.setText("To meet: " + profileDataModel.getName());
+        if(profileDataModel.getName().equals("")){
+            viewHolder.nameText.setText("Personal activity");
+        }else{
+            viewHolder.nameText.setText("To meet: " + profileDataModel.getName());
+        }
         viewHolder.timeText.setText("Time: " + profileDataModel.getTime());
         if(profileDataModel.getMsg().equals("")){
-            viewHolder.msgText.setText("No message");
+            viewHolder.msgText.setText("No note");
         }else{
-            viewHolder.msgText.setText("Message: " + profileDataModel.getMsg());
+            viewHolder.msgText.setText("Note: " + profileDataModel.getMsg());
         }
         // Return the completed view to render on screencon
         return convertView;

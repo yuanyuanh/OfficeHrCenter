@@ -118,7 +118,7 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
                 case 2:
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(ProfileActivity.this,"You have canceled the reservation successfully",Toast.LENGTH_LONG).show();
+                            Toast.makeText(ProfileActivity.this,"You have canceled the avtivity successfully",Toast.LENGTH_LONG).show();
                             if(upcomingList.contains(currentData)){
                                 upcomingList.remove(selected);
                                 upcomingAdapter.notifyDataSetChanged();
@@ -144,12 +144,12 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
         public void run() {
 
             dbConn.connenctDB();
-            String query = "select users.id, name, email, phone, office, reserved_time, msg from reservation join users ";
+            String query = "select users.id, name, email, phone, office, reserved_time, msg from reservation ";
 
             if (myApp.isProf()) {
-                query += "on reservation.student_id = users.id where professor_id = " + myApp.getID() + ";";
+                query += "left join users on reservation.student_id = users.id where professor_id = " + myApp.getID() + ";";
             } else {
-                query += "on reservation.professor_id = users.id where student_id = " + myApp.getID() + ";";
+                query += "join users on reservation.professor_id = users.id where student_id = " + myApp.getID() + ";";
             }
 
             ResultSet result = dbConn.select(query);
@@ -193,11 +193,9 @@ public class ProfileActivity extends AppCompatActivity implements OnItemClickLis
             String query;
             if(myApp.isProf()){
                 query = "DELETE FROM reservation WHERE professor_id = " + myApp.getID()
-                        + " and student_id = " + currentData.getID()
                         + " and reserved_time = \'" + currentData.getTime() + "\';";
             }else{
                 query = "DELETE FROM reservation WHERE professor_id = " + currentData.getID()
-                        + " and student_id = " + myApp.getID()
                         + " and reserved_time = \'" + currentData.getTime() + "\';";
             }
             dbConn.connenctDB();
