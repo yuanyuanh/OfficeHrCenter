@@ -153,6 +153,9 @@ public class BookingActivity extends AppCompatActivity implements TextToSpeech.O
                 Log.i(TAG_SPEAKER, "Speaker Not Already Speaking");
                 speak("Your message is: " + message);
             }
+        }else{
+            t = new Thread(checkAvail);
+            t.start();
         }
     }
 
